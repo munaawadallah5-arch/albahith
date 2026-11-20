@@ -619,6 +619,38 @@ def clean(item, allowed_fields, strict=False):
             "added": TODAY.isoformat()}
 
 
+STOP = {"the", "and", "for", "of", "in", "on", "call", "papers", "conference", "international", "annual", "prize", "award",
+        "مؤتمر", "المؤتمر", "الدولي", "الدولية", "دولي", "جائزة", "الجائزة", "الدورة", "دورة", "باب", "فتح", "الترشيح", "للدورة",
+        "السنوي", "السنوية", "العلمي", "العلمية", "دعوة", "للمشاركة", "في", "من", "على", "عن",
+        "ترشيح", "ترشح", "تقديم", "مشاركة", "قادمة", "عام", "لعام", "nominations", "submissions"}
+
+
+def words(title):
+    """كلمات العنوان المميِّزة، بلا «ال» و«ل» و«و» و«ب» في أولها (فتطابق «لجائزة الملك فيصل» و«جائزة الملك فيصل»)."""
+    out = set()
+    for w in re.findall(r"[\w']{3,}", (title or "").lower()):
+        w = re.sub(r"^(?:وال|بال|لل|ال|ول|و|ل|ب)(?=\w{3,})", "", w)
+        if w not in STOP and not w.isdigit():
+            out.add(w)
+    return out
+
+
+def same_event(a, b):
+    """إعلانان عن الحدث نفسه بعنوانين أو رابطين مختلفين (خبر صحفي وصفحة رسمية مثلًا):
+    يشتركان في موعد واحد على الأقل، وفي كلمتين مميِّزتين على الأقل من العنوان."""
+    da = {v for k, v in (a.get("dates") or {}).items() if k != "announced"}
+    db = {v for k, v in (b.get("dates") or {}).items() if k != "announced"}
+    return bool(da & db) and len(words(a.get("title")) & words(b.get("title"))) >= 2
+
+
+def load_removed():
+    """روابط إعلانات حُذفت يدويًا، كي لا يعيدها التحديث التلقائي."""
+    try:
+        return {norm_url(x) for x in open(os.path.join(ROOT, "updater", "removed.txt"), encoding="utf-8").read().split() if x.startswith("http")}
+    except OSError:
+        return set()
+
+
 def last_date(e):
     vals = [v for v in (e.get("dates") or {}).values() if re.match(r"^\d{4}-\d{2}-\d{2}$", str(v))]
     return max(vals) if vals else None
@@ -631,6 +663,7 @@ def main():
     known_urls = {norm_url(e.get("url")) for e in events}
     known_titles = {norm_title(e.get("title")) for e in events}
     known_ids = {e.get("id") for e in events}
+    removed = load_removed()
 
     candidates = []
     if mode in ("ai", "both"):
@@ -655,7 +688,8 @@ def main():
         group = e["source"].split(" – ")[0]  # «UPenn CFP – religion» و«UPenn CFP – theory» مصدر واحد
         if per_source and from_source.get(group, 0) >= per_source:
             continue  # كي لا يملأ مصدر واحد التحديث كله
-        if norm_url(e["url"]) in known_urls or norm_title(e["title"]) in known_titles or e["id"] in known_ids:
+        if norm_url(e["url"]) in known_urls or norm_title(e["title"]) in known_titles or e["id"] in known_ids \
+                or norm_url(e["url"]) in removed or any(same_event(e, x) for x in events + new):
             continue
         known_urls.add(norm_url(e["url"]))
         known_titles.add(norm_title(e["title"]))
