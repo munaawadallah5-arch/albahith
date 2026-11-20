@@ -30,7 +30,7 @@ const baseEvents=Array.isArray(window.EVENTS)?window.EVENTS:[];
 let events=[];
 function rebuild(){events=[...baseEvents,...localEvents.map(e=>({...e,local:true}))]}
 rebuild();
-let year=today.getFullYear(),selDay=null,soundOn=false,actx=null;const notified=new Set();
+let year=today.getFullYear(),curM=today.getMonth(),selDay=null,soundOn=false,actx=null;const notified=new Set();
 
 function evDates(ev){return STAGES.filter(s=>ev.dates&&parse(ev.dates[s[0]])).map(s=>({k:s[0],v:ev.dates[s[0]],c:s[2]}))}
 function nextDate(ev){const f=evDates(ev).filter(x=>days(x.v)>=0).sort((a,b)=>a.v<b.v?-1:1);return f[0]||null}
@@ -52,7 +52,7 @@ function renderChips(){
    `<button type="button" class="chip" id="clearF">${prefs.fields.length?"إلغاء التحديد":"كل المجالات"}</button>`;
 }
 function renderYear(){
-  $("yLabel").textContent=year;
+  $("yLabel").textContent=year;if($("mLabel"))$("mLabel").textContent=MONTHS[curM]+" "+year;
   const vis=visible(),map={};
   vis.forEach(ev=>evDates(ev).forEach(x=>{(map[x.v]=map[x.v]||[]).push({ev,x})}));
   vis.forEach(ev=>{const s=parse(ev.dates&&ev.dates.start),e=parse(ev.dates&&ev.dates.end);if(s&&e&&e>s){for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1)){const k=key(d);map[k]=map[k]||[];if(!map[k].some(o=>o.ev===ev))map[k].push({ev,x:{k:"start",v:k,c:"--evt"}})}}});
@@ -69,7 +69,7 @@ function renderYear(){
       cells+=it.length?`<button type="button" class="${cls}" data-day="${k}" aria-label="${d} ${MONTHS[m]}: ${it.length} موعد">${d}<span class="dots">${cols.map(c=>`<i style="background:var(${c})"></i>`).join("")}</span></button>`
         :`<span class="${cls}">${d}</span>`;
     }
-    h+=`<div class="month"><h3>${MONTHS[m]}<small>${cnt?cnt+" يوم فيه مواعيد":""}</small></h3><div class="grid">${cells}</div></div>`;
+    h+=`<div class="month${m===curM?" cur":""}" data-m="${m}"><h3>${MONTHS[m]}<small>${cnt?cnt+" يوم فيه مواعيد":""}</small></h3><div class="grid">${cells}</div></div>`;
   }
   $("months").innerHTML=h;
   const di=$("dayinfo");
@@ -110,7 +110,7 @@ function renderAlarm(){
   $("alarmList").innerHTML=it.length?it.slice(0,8).map(o=>`<li><b>${o.d===0?"اليوم":"بعد "+o.d+" يوم"}</b> · ${esc(alarmText(o.ev,o.x.k))}</li>`).join(""):`<li>لا مواعيد خلال ${prefs.lead===1?"يوم":prefs.lead+" أيام"}.</li>`;
   $("lead").value=String(prefs.lead);
 }
-function renderAll(){renderChips();renderYear();renderCards();renderAlarm()}
+function renderAll(){if(typeof homeSummary==="function")setTimeout(homeSummary);renderChips();renderYear();renderCards();renderAlarm()}
 
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),6000)}
 function chime(){if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.001,actx.currentTime);g.gain.exponentialRampToValueAtTime(.3,actx.currentTime+.05);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+1.2);o.start();o.stop(actx.currentTime+1.3)}
@@ -142,6 +142,9 @@ $("fieldChips").addEventListener("click",e=>{const b=e.target.closest("button");
   savePrefs();renderAll()});
 ["q","kindF","showPast"].forEach(id=>$(id).addEventListener("input",()=>{renderYear();renderCards();renderAlarm()}));
 $("prevY").onclick=()=>{year--;renderYear()};$("nextY").onclick=()=>{year++;renderYear()};
+// على الهاتف: شهر واحد في كل مرة، مع التنقل بين الأشهر (ويتغير العام عند تجاوز يناير أو ديسمبر)
+function moveMonth(step){curM+=step;if(curM<0){curM=11;year--}else if(curM>11){curM=0;year++}renderYear()}
+$("prevM").onclick=()=>moveMonth(-1);$("nextM").onclick=()=>moveMonth(1);
 $("months").addEventListener("click",e=>{const b=e.target.closest("[data-day]");if(!b)return;selDay=b.dataset.day;renderYear()});
 // تظهر تفاصيل اليوم في لوحة عائمة أسفل الشاشة؛ تُغلق بزر الإغلاق أو بالضغط خارجها أو بمفتاح Esc
 function closeDay(){if(!selDay)return;selDay=null;renderYear()}
@@ -279,6 +282,22 @@ setMode(prefs.srcmode||"free");
   const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
   if(ios){box.hidden=false;hint.textContent="لتثبيت «الباحث» تطبيقًا على جهازك: افتح الموقع في Safari، واضغط زر المشاركة ⬆︎، ثم «إضافة إلى الشاشة الرئيسية»."}
 })();
+
+/* الصفحات: الرئيسية، الإعلانات، التقويم، أضف، الإعدادات (#home …)؛ زر الرجوع في الهاتف يعود إلى الصفحة السابقة */
+const PAGES=["home","list","cal","add","settings"];
+function showPage(){
+  const pg=PAGES.includes(location.hash.slice(1))?location.hash.slice(1):"home";
+  document.querySelectorAll(".page").forEach(sec=>sec.hidden=sec.dataset.page!==pg);
+  document.querySelectorAll(".tabs a").forEach(a=>a.dataset.tab===pg?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  if(pg!=="cal"&&typeof closeDay==="function")closeDay();
+  window.scrollTo(0,0);
+}
+addEventListener("hashchange",showPage);
+showPage();
+function homeSummary(){
+  const n=visible().length,f=prefs.fields.length;
+  const hs=$("homeStatus");if(hs)hs.textContent=f?`في مجالاتك (${prefs.fields.join("، ")}): ${n} إعلانًا.`:`لم تختر مجالاتك بعد؛ تُعرض كل الإعلانات (${n}). اختر مجالاتك من صفحة «الإعلانات».`;
+}
 
 renderAll();
 })();
