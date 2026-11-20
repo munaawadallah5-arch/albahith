@@ -48,8 +48,10 @@ function plusDay(s){const n=parse(s);n.setDate(n.getDate()+1);return key(n).repl
 function gcal(ev,x){return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(stageLabel(ev,x.k)+": "+ev.title)+"&dates="+x.v.replace(/-/g,"")+"/"+plusDay(x.v)+"&details="+encodeURIComponent((ev.org||"")+"\n"+(safeUrl(ev.url)||""))}
 
 function renderChips(){
-  $("fieldChips").innerHTML=FIELDS.map(f=>`<button type="button" class="chip" aria-pressed="${prefs.fields.includes(f)}" data-f="${esc(f)}">${esc(f)}</button>`).join("")+
-   `<button type="button" class="chip" id="clearF">${prefs.fields.length?"إلغاء التحديد":"كل المجالات"}</button>`;
+  // أزرار المجالات في الصفحة الرئيسية وصفحة الإعلانات معًا، والاختيار واحد
+  const h=FIELDS.map(f=>`<button type="button" class="chip" aria-pressed="${prefs.fields.includes(f)}" data-f="${esc(f)}">${esc(f)}</button>`).join("")+
+   `<button type="button" class="chip" data-clear="1">${prefs.fields.length?"إلغاء التحديد":"كل المجالات"}</button>`;
+  ["fieldChips","homeFields"].forEach(id=>{if($(id))$(id).innerHTML=h});
 }
 function renderYear(){
   $("yLabel").textContent=year;if($("mLabel"))$("mLabel").textContent=MONTHS[curM]+" "+year;
@@ -137,9 +139,9 @@ function eventsFile(){
 }
 
 /* events */
-$("fieldChips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
-  if(b.id==="clearF")prefs.fields=[];else{const f=b.dataset.f;prefs.fields=prefs.fields.includes(f)?prefs.fields.filter(x=>x!==f):[...prefs.fields,f]}
-  savePrefs();renderAll()});
+["fieldChips","homeFields"].forEach(id=>$(id).addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.clear)prefs.fields=[];else{const f=b.dataset.f;prefs.fields=prefs.fields.includes(f)?prefs.fields.filter(x=>x!==f):[...prefs.fields,f]}
+  savePrefs();renderAll()}));
 ["q","kindF","showPast"].forEach(id=>$(id).addEventListener("input",()=>{renderYear();renderCards();renderAlarm()}));
 $("prevY").onclick=()=>{year--;renderYear()};$("nextY").onclick=()=>{year++;renderYear()};
 // على الهاتف: شهر واحد في كل مرة، مع التنقل بين الأشهر (ويتغير العام عند تجاوز يناير أو ديسمبر)
@@ -297,7 +299,7 @@ showPage();
 function homeSummary(){
   const pool=events.filter(ev=>(!prefs.fields.length||(ev.fields||[]).some(f=>prefs.fields.includes(f)))&&!isPast(ev));
   const f=prefs.fields.length;
-  $("homeStatus").textContent=f?`مجالاتك: ${prefs.fields.join("، ")}. فيها ${pool.length} إعلانًا قائمًا.`:`لم تختر مجالاتك بعد، فتظهر كل الإعلانات (${pool.length}). اختر مجالاتك من صفحة «الإعلانات».`;
+  $("homeStatus").textContent=f?`مجالاتك: ${prefs.fields.join("، ")}. فيها ${pool.length} إعلانًا قائمًا.`:`لم تختر مجالاتك بعد، فتظهر كل الإعلانات (${pool.length}). اختر مجالاتك من الأزرار أعلاه.`;
   // أقرب المواعيد
   const items=[];pool.forEach(ev=>{const x=evDates(ev).filter(x=>x.k!=="announced"&&days(x.v)>=0).sort((a,b)=>a.v<b.v?-1:1)[0];if(x)items.push({ev,x,d:days(x.v)})});  // أقرب موعد لكل إعلان، لا كل مواعيده
   items.sort((a,b)=>a.x.v<b.x.v?-1:a.x.v>b.x.v?1:0);
