@@ -94,10 +94,12 @@ function alarmItems(){
   const out=[];pool().forEach(ev=>evDates(ev).forEach(x=>{const d=days(x.v);if(d>=0&&d<=prefs.lead&&x.k!=="end")out.push({ev,x,d})}));
   return out.sort((a,b)=>a.d-b.d);
 }
+// في المنبّه: «بدء + اسم المؤتمر» بدل «بدء الانعقاد: الاسم»
+function alarmText(ev,k){return k==="start"&&ev.kind!=="جائزة"?"بدء "+ev.title:stageLabel(ev,k)+": "+ev.title}
 function renderAlarm(){
   const it=alarmItems();
   $("alarmTitle").textContent=prefs.watch.length?"المنبّه: الإعلانات التي اخترتِ متابعتها":"المنبّه: مواعيد مجالاتك القريبة";
-  $("alarmList").innerHTML=it.length?it.slice(0,8).map(o=>`<li><b>${o.d===0?"اليوم":"بعد "+o.d+" يوم"}</b> · ${esc(stageLabel(o.ev,o.x.k))}: ${esc(o.ev.title)}</li>`).join(""):`<li>لا مواعيد خلال ${prefs.lead===1?"يوم":prefs.lead+" أيام"}.</li>`;
+  $("alarmList").innerHTML=it.length?it.slice(0,8).map(o=>`<li><b>${o.d===0?"اليوم":"بعد "+o.d+" يوم"}</b> · ${esc(alarmText(o.ev,o.x.k))}</li>`).join(""):`<li>لا مواعيد خلال ${prefs.lead===1?"يوم":prefs.lead+" أيام"}.</li>`;
   $("lead").value=String(prefs.lead);
 }
 function renderAll(){renderChips();renderYear();renderCards();renderAlarm()}
@@ -106,7 +108,7 @@ function toast(t){const el=$("toast");el.textContent=t;el.classList.add("on");cl
 function chime(){if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.001,actx.currentTime);g.gain.exponentialRampToValueAtTime(.3,actx.currentTime+.05);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+1.2);o.start();o.stop(actx.currentTime+1.3)}
 function checkAlarm(){if(!soundOn)return;const it=alarmItems().filter(o=>!notified.has(o.ev.id+o.x.k));if(!it.length)return;
   it.forEach(o=>notified.add(o.ev.id+o.x.k));chime();
-  const msg=stageLabel(it[0].ev,it[0].x.k)+" — "+it[0].ev.title+(it[0].d===0?" اليوم":" بعد "+it[0].d+" يوم")+(it.length>1?" (+"+(it.length-1)+")":"");
+  const msg=alarmText(it[0].ev,it[0].x.k)+(it[0].d===0?" اليوم":" بعد "+it[0].d+" يوم")+(it.length>1?" (+"+(it.length-1)+")":"");
   toast("تذكير: "+msg);
   try{if("Notification" in window&&Notification.permission==="granted")new Notification("الباحث: تذكير",{body:msg,icon:"logo.svg",lang:"ar",dir:"rtl"})}catch(e){}}
 function savePrefs(){store(LS_PREFS,prefs)}
