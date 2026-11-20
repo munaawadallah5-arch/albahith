@@ -83,7 +83,7 @@ function renderCards(){
     const nd=nextDate(ev),w=prefs.watch.includes(ev.id),u=safeUrl(ev.url);
     return `<article class="card ${isPast(ev)?"past":""}">
       <header><div><h3>${esc(ev.title)}</h3><p class="org">${esc(ev.org||"")}${ev.place?" · "+esc(ev.place):""}</p></div><span class="kind">${esc(ev.kind||"")}</span></header>
-      <ul class="tl">${evDates(ev).map(x=>{const dd=days(x.v);return `<li class="${dd<0?"done":""}"><i style="background:var(${x.c})"></i><span>${esc(stageLabel(ev,x.k))} <time>${fmt(x.v)}</time></span>${dd>=0?`<a class="cal" href="${esc(gcal(ev,x))}" target="_blank" rel="noopener">أضف للتقويم</a>`:"<span></span>"}</li>`}).join("")||`<li><span></span><span class="note">لم تُعلن المواعيد بعد</span><span></span></li>`}</ul>
+      <ul class="tl">${evDates(ev).map(x=>{const dd=days(x.v);return `<li class="${dd<0?"done":""}"><i style="background:var(${x.c})"></i><span>${esc(stageLabel(ev,x.k))} <time>${fmt(x.v)}</time></span>${dd>=0?`<a class="cal" href="${esc(gcal(ev,x))}" target="_blank" rel="noopener">أضف إلى التقويم</a>`:"<span></span>"}</li>`}).join("")||`<li><span></span><span class="note">لم تُعلن المواعيد بعد</span><span></span></li>`}</ul>
       ${nd?`<p class="note"><b style="color:var(--ink)">القادم: ${esc(stageLabel(ev,nd.k))} ${days(nd.v)===0?"اليوم":"بعد "+days(nd.v)+" يومًا"}</b></p>`:""}
       ${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}
       <div class="tags">${(ev.fields||[]).map(f=>`<span>${esc(f)}</span>`).join("")}${ev.local?(ev.source==="ai"?`<span>من بحثك الذكي</span>`:`<span>أضفتِه في هذا المتصفح</span>`):""}</div>
