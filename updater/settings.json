@@ -576,9 +576,6 @@
       "type": "جائزة",
       "home": "https://www.kapsarc.org/ar/kapsarc-arabic-award/",
       "kind": "جائزة",
-      "fields": [
-        "لغة عربية وأدب"
-      ],
       "events_pages": [],
       "enabled": true
     },
@@ -1101,7 +1098,7 @@
     {
       "name": "H-Announce (H-Net)",
       "type": "page",
-      "url": "https://networks.h-net.org/h-announce",
+      "url": "https://networks.h-net.org/announcements",
       "fields": [],
       "max_links": 20,
       "enabled": true

@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sys
+import http.cookiejar
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 import urllib.request
@@ -106,6 +107,20 @@ def norm_url(u):
 
 def norm_title(t):
     return re.sub(r"[\W_]+", "", (t or "").lower())
+
+
+DATE_LINE = re.compile(r"^[\W\d_]*(?:\d{1,2}\s+\S+\s+\d{4}|\S+\s+\d{1,2},?\s+\d{4}|\d{4}-\d{2}-\d{2})[\W\d_]*$")
+
+
+def tidy_title(raw):
+    """عنوان الرابط قد يحمل تاريخ النشر واسم القسم وأسطرًا فارغة؛ نأخذ السطر الذي يدل على الإعلان."""
+    lines = [re.sub(r"\s+", " ", x).strip() for x in re.split(r"[\r\n]+", raw or "")]
+    lines = [x for x in lines if x and not DATE_LINE.match(western_digits(x)) and len(x) > 3]
+    if not lines:
+        return ""
+    hit = [x for x in lines if any(w in x.lower() for w in PAGE_WORDS)]
+    t = max(hit or lines, key=len)  # الأطول: «CFP: CIUTI Conference 2027» لا «Call For Papers»
+    return t[:200].rstrip(" .…") + ("…" if len(t) > 200 else "")
 
 
 def strip_tags(s):
@@ -219,8 +234,11 @@ def guess_kind(text, default):
 
 
 def fetch(url, data=None, headers=None, timeout=25):
-    req = urllib.request.Request(url, data=data, headers={"User-Agent": "albahith-updater/1.0 (+GitHub Actions)", **(headers or {})})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    req = urllib.request.Request(url, data=data, headers={"User-Agent": "Mozilla/5.0 (compatible; albahith-updater/1.0; +https://munaawadallah5-arch.github.io/albahith/)",
+                                                          "Accept-Language": "ar,en;q=0.8", **(headers or {})})
+    # لكل طلب مخزن «كعكات» خاص: بعض المواقع تضع كعكة ثم تعيد التوجيه، وبدونها تدور في حلقة
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    with opener.open(req, timeout=timeout) as r:
         return r.read().decode(r.headers.get_content_charset() or "utf-8", "replace")
 
 
@@ -246,21 +264,39 @@ def follow(src, items, only_undated=True):
             report["notes"].append(f"{src.get('name')}: تعذّر فتح {it['url']}: {type(e).__name__}")
 
 
-def from_rss(src):
-    xml = fetch(src["url"])
-    xml = re.sub(r"\sxmlns(:\w+)?=\"[^\"]+\"", "", xml, count=5)
-    root = ET.fromstring(xml.encode("utf-8"))
-    items = root.findall(".//item") or root.findall(".//entry")
+def rss_items(xml):
+    """يقرأ عناصر RSS/Atom؛ يزيل بادئات الأسماء (media: و News: …) التي تُفشل المحلّل، وإن فشل يقرأ بالتعابير."""
+    x = re.sub(r"\sxmlns(:[\w.-]+)?=(\"[^\"]*\"|'[^']*')", "", xml)
+    x = re.sub(r"<(/?)[\w.-]+:([\w.-]+)", r"<\1\2", x)
+    x = re.sub(r"\s[\w.-]+:([\w.-]+)=", r" \1=", x)
     out = []
-    for it in items[:60]:
-        title = strip_tags(it.findtext("title") or "")
-        link = it.findtext("link") or ""
-        if not link:
-            le = it.find("link")
-            link = le.get("href", "") if le is not None else ""
+    try:
+        root = ET.fromstring(x.encode("utf-8"))
+        for it in root.findall(".//item") or root.findall(".//entry"):
+            link = it.findtext("link") or ""
+            if not link.strip():
+                le = it.find("link")
+                link = le.get("href", "") if le is not None else ""
+            out.append((it.findtext("title") or "", link, it.findtext("description") or it.findtext("summary") or it.findtext("content") or ""))
+        return out
+    except ET.ParseError:
+        pass
+    for m in re.finditer(r"<(item|entry)\b.*?</\1>", x, re.S | re.I):
+        b = m.group(0)
+        g = lambda tag: (re.search(rf"<{tag}\b[^>]*>(.*?)</{tag}>", b, re.S | re.I) or [None, ""])[1]
+        link = g("link") or (re.search(r"<link\b[^>]*href=\"([^\"]+)\"", b) or [None, ""])[1]
+        unc = lambda v: html.unescape(re.sub(r"^\s*<!\[CDATA\[(.*)\]\]>\s*$", r"\1", v, flags=re.S))
+        out.append((unc(g("title")), unc(link), unc(g("description") or g("summary") or g("content"))))
+    return out
+
+
+def from_rss(src):
+    out = []
+    for title, link, desc in rss_items(fetch(src["url"]))[:60]:
+        title = strip_tags(title)
         if src.get("require_words") and not any(w in title.lower() for w in PAGE_WORDS):
             continue
-        desc = strip_tags(it.findtext("description") or it.findtext("summary") or it.findtext("content") or "")
+        desc = strip_tags(desc)
         out.append({"title": title, "url": clean_link(link), "text": title + "\n" + desc, "org": src.get("org", ""), "place": ""})
         if len(out) >= int(src.get("max_items", 60)):
             break
@@ -308,7 +344,7 @@ def from_page(src):
     body = re.sub(r"<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", page, flags=re.S | re.I)
     out, seen = [], set()
     for m in re.finditer(r"<a\b[^>]*href=\"([^\"#][^\"]*)\"[^>]*>(.*?)</a>", body, re.S | re.I):
-        title = strip_tags(m.group(2))
+        title = tidy_title(strip_tags(m.group(2)))
         low = title.lower()
         if len(title) < 12 or not any(w in low for w in PAGE_WORDS):
             continue
@@ -362,7 +398,7 @@ def collect_free(settings):
             dates = label_dates(it["text"])
             found.append({
                 "title": it["title"], "org": it["org"], "place": it["place"], "url": it["url"],
-                "kind": src.get("kind") or guess_kind(it["title"], "مؤتمر"),
+                "kind": guess_kind(it["title"], src.get("kind") or "مؤتمر"),
                 "fields": classify(it["title"] + " " + it["text"][:1500], src.get("fields", []), None),
                 "dates": dates, "note": "", "source": src.get("name", "free"),
             })
@@ -496,8 +532,13 @@ def parse_json_array(text):
 
 
 # ---------------------------------------------------------------- التنقية والدمج
+SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "عدد خاص", "عدد خاصّ"]
+
+
 def clean(item, allowed_fields):
-    title = strip_tags(str(item.get("title", "")))[:220]
+    title = re.sub(r"\s+", " ", strip_tags(str(item.get("title", "")))).strip()[:220]
+    if any(w in title.lower() for w in SKIP_WORDS):
+        return None  # دعوات المجلات ليست مؤتمرات ولا جوائز
     url = str(item.get("url", "")).strip()
     if not title or not re.match(r"^https?://", url):
         return None
