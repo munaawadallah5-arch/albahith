@@ -17,48 +17,857 @@
   ],
   "_شرح_universities": "الجامعات والمراكز البحثية التي يُبحث في مواقعها (ومنها كل ما تحت النطاق: الكليات والمراكز والمعاهد التابعة). domain: نطاق الموقع، ويُستعمل في البحث الذكي. events_pages: روابط صفحات الإعلانات أو الفعاليات، وتقرؤها الطريقة المجانية أيضًا، فتفتح كل إعلان فيها وتقرأ مواعيده. enabled: false للإيقاف.",
   "universities": [
-    {"name": "جامعة الملك سعود", "domain": "ksu.edu.sa", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
-    {"name": "جامعة الإمام محمد بن سعود الإسلامية", "domain": "imamu.edu.sa", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
-    {"name": "جامعة أم القرى", "domain": "uqu.edu.sa", "place": "مكة المكرمة، السعودية", "events_pages": [], "enabled": true},
-    {"name": "جامعة الملك عبدالعزيز", "domain": "kau.edu.sa", "place": "جدة، السعودية", "events_pages": [], "enabled": true},
-    {"name": "الجامعة الإسلامية بالمدينة المنورة", "domain": "iu.edu.sa", "place": "المدينة المنورة، السعودية", "events_pages": [], "enabled": true},
-    {"name": "جامعة القاهرة", "domain": "cu.edu.eg", "place": "القاهرة، مصر", "events_pages": [], "enabled": true},
-    {"name": "جامعة عين شمس", "domain": "asu.edu.eg", "place": "القاهرة، مصر", "events_pages": [], "enabled": true},
-    {"name": "جامعة الأزهر", "domain": "azhar.edu.eg", "place": "القاهرة، مصر", "events_pages": [], "enabled": true},
-    {"name": "جامعة أسيوط", "domain": "aun.edu.eg", "place": "أسيوط، مصر", "events_pages": [], "enabled": true},
-    {"name": "الجامعة الأردنية", "domain": "ju.edu.jo", "place": "عمّان، الأردن", "events_pages": [], "enabled": true},
-    {"name": "جامعة اليرموك", "domain": "yu.edu.jo", "place": "إربد، الأردن", "events_pages": [], "enabled": true},
-    {"name": "جامعة بيرزيت", "domain": "birzeit.edu", "place": "بيرزيت، فلسطين", "events_pages": [], "enabled": true},
-    {"name": "جامعة قطر", "domain": "qu.edu.qa", "place": "الدوحة، قطر", "events_pages": [], "enabled": true},
-    {"name": "جامعة حمد بن خليفة", "domain": "hbku.edu.qa", "place": "الدوحة، قطر", "events_pages": ["https://cile.hbku.edu.qa/public-outreach/calendar"], "enabled": true},
-    {"name": "معهد الدوحة للدراسات العليا", "domain": "dohainstitute.edu.qa", "place": "الدوحة، قطر", "events_pages": [], "enabled": true},
-    {"name": "جامعة الشارقة", "domain": "sharjah.ac.ae", "place": "الشارقة، الإمارات", "events_pages": [], "enabled": true},
-    {"name": "جامعة الإمارات العربية المتحدة", "domain": "uaeu.ac.ae", "place": "العين، الإمارات", "events_pages": [], "enabled": true},
-    {"name": "جامعة محمد بن زايد للعلوم الإنسانية", "domain": "mbzuh.ac.ae", "place": "أبوظبي، الإمارات", "events_pages": [], "enabled": true},
-    {"name": "جامعة السلطان قابوس", "domain": "squ.edu.om", "place": "مسقط، عُمان", "events_pages": [], "enabled": true},
-    {"name": "جامعة الكويت", "domain": "ku.edu.kw", "place": "الكويت", "events_pages": [], "enabled": true},
-    {"name": "الجامعة الأمريكية في بيروت", "domain": "aub.edu.lb", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
-    {"name": "الجامعة اللبنانية", "domain": "ul.edu.lb", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
-    {"name": "جامعة بغداد", "domain": "uobaghdad.edu.iq", "place": "بغداد، العراق", "events_pages": [], "enabled": true},
-    {"name": "جامعة البصرة", "domain": "uobasrah.edu.iq", "place": "البصرة، العراق", "events_pages": [], "enabled": true},
-    {"name": "جامعة محمد الخامس", "domain": "um5.ac.ma", "place": "الرباط، المغرب", "events_pages": [], "enabled": true},
-    {"name": "جامعة أبو بكر بلقايد – تلمسان", "domain": "univ-tlemcen.dz", "place": "تلمسان، الجزائر", "events_pages": [], "enabled": true},
-    {"name": "جامعة سطيف 2", "domain": "univ-setif2.dz", "place": "سطيف، الجزائر", "events_pages": [], "enabled": true},
-    {"name": "جامعة عبد الحميد بن باديس – مستغانم", "domain": "univ-mosta.dz", "place": "مستغانم، الجزائر", "events_pages": [], "enabled": true},
-    {"name": "المركز العربي للأبحاث ودراسة السياسات", "domain": "dohainstitute.org", "place": "الدوحة، قطر", "events_pages": ["https://www.dohainstitute.org/en/Events/Pages/index.aspx"], "enabled": true},
-    {"name": "مركز الملك فيصل للبحوث والدراسات الإسلامية", "domain": "kfcris.com", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
-    {"name": "مجمع الملك سلمان العالمي للغة العربية", "domain": "ksaa.gov.sa", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
-    {"name": "مؤسسة الدراسات الفلسطينية", "domain": "palestine-studies.org", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
-    {"name": "المجلس العربي للعلوم الاجتماعية", "domain": "theacss.org", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
-    {"name": "مؤسسة الفكر العربي", "domain": "arabthought.org", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
-    {"name": "مؤسسة مؤمنون بلا حدود", "domain": "mominoun.com", "place": "الرباط، المغرب", "events_pages": [], "enabled": true},
-    {"name": "مؤسسة الملك عبد العزيز آل سعود للدراسات الإسلامية والعلوم الإنسانية", "domain": "fondation.org.ma", "place": "الدار البيضاء، المغرب", "events_pages": [], "enabled": true},
-    {"name": "مؤسسة الفرقان للتراث الإسلامي", "domain": "al-furqan.com", "place": "لندن، المملكة المتحدة", "events_pages": [], "enabled": true},
-    {"name": "مكتبة الإسكندرية", "domain": "bibalex.org", "place": "الإسكندرية، مصر", "events_pages": [], "enabled": true},
-    {"name": "الألكسو", "domain": "alecso.org", "place": "تونس", "events_pages": [], "enabled": true},
-    {"name": "الإيسيسكو", "domain": "icesco.org", "place": "الرباط، المغرب", "events_pages": [], "enabled": true}
+    {
+      "name": "جامعة الملك سعود",
+      "domain": "ksu.edu.sa",
+      "place": "الرياض، السعودية",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة الإمام محمد بن سعود الإسلامية",
+      "domain": "imamu.edu.sa",
+      "place": "الرياض، السعودية",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة أم القرى",
+      "domain": "uqu.edu.sa",
+      "place": "مكة المكرمة، السعودية",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة الملك عبدالعزيز",
+      "domain": "kau.edu.sa",
+      "place": "جدة، السعودية",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "الجامعة الإسلامية بالمدينة المنورة",
+      "domain": "iu.edu.sa",
+      "place": "المدينة المنورة، السعودية",
+      "events_pages": [
+        "https://conferences.iu.edu.sa/"
+      ],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة القاهرة",
+      "domain": "cu.edu.eg",
+      "place": "القاهرة، مصر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة عين شمس",
+      "domain": "asu.edu.eg",
+      "place": "القاهرة، مصر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة الأزهر",
+      "domain": "azhar.edu.eg",
+      "place": "القاهرة، مصر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة أسيوط",
+      "domain": "aun.edu.eg",
+      "place": "أسيوط، مصر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "الجامعة الأردنية",
+      "domain": "ju.edu.jo",
+      "place": "عمّان، الأردن",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة اليرموك",
+      "domain": "yu.edu.jo",
+      "place": "إربد، الأردن",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة بيرزيت",
+      "domain": "birzeit.edu",
+      "place": "بيرزيت، فلسطين",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة قطر",
+      "domain": "qu.edu.qa",
+      "place": "الدوحة، قطر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة حمد بن خليفة",
+      "domain": "hbku.edu.qa",
+      "place": "الدوحة، قطر",
+      "events_pages": [
+        "https://cile.hbku.edu.qa/public-outreach/calendar"
+      ],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "معهد الدوحة للدراسات العليا",
+      "domain": "dohainstitute.edu.qa",
+      "place": "الدوحة، قطر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة الشارقة",
+      "domain": "sharjah.ac.ae",
+      "place": "الشارقة، الإمارات",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة الإمارات العربية المتحدة",
+      "domain": "uaeu.ac.ae",
+      "place": "العين، الإمارات",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة محمد بن زايد للعلوم الإنسانية",
+      "domain": "mbzuh.ac.ae",
+      "place": "أبوظبي، الإمارات",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة السلطان قابوس",
+      "domain": "squ.edu.om",
+      "place": "مسقط، عُمان",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة الكويت",
+      "domain": "ku.edu.kw",
+      "place": "الكويت",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "الجامعة الأمريكية في بيروت",
+      "domain": "aub.edu.lb",
+      "place": "بيروت، لبنان",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "الجامعة اللبنانية",
+      "domain": "ul.edu.lb",
+      "place": "بيروت، لبنان",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة بغداد",
+      "domain": "uobaghdad.edu.iq",
+      "place": "بغداد، العراق",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة البصرة",
+      "domain": "uobasrah.edu.iq",
+      "place": "البصرة، العراق",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة محمد الخامس",
+      "domain": "um5.ac.ma",
+      "place": "الرباط، المغرب",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة أبو بكر بلقايد – تلمسان",
+      "domain": "univ-tlemcen.dz",
+      "place": "تلمسان، الجزائر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة سطيف 2",
+      "domain": "univ-setif2.dz",
+      "place": "سطيف، الجزائر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "جامعة عبد الحميد بن باديس – مستغانم",
+      "domain": "univ-mosta.dz",
+      "place": "مستغانم، الجزائر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "جامعة"
+    },
+    {
+      "name": "المركز العربي للأبحاث ودراسة السياسات",
+      "domain": "dohainstitute.org",
+      "place": "الدوحة، قطر",
+      "events_pages": [
+        "https://www.dohainstitute.org/en/Events/Pages/index.aspx"
+      ],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مركز الملك فيصل للبحوث والدراسات الإسلامية",
+      "domain": "kfcris.com",
+      "place": "الرياض، السعودية",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مجمع الملك سلمان العالمي للغة العربية",
+      "domain": "ksaa.gov.sa",
+      "place": "الرياض، السعودية",
+      "events_pages": [
+        "https://conference.ksaa.gov.sa/"
+      ],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مؤسسة الدراسات الفلسطينية",
+      "domain": "palestine-studies.org",
+      "place": "بيروت، لبنان",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "المجلس العربي للعلوم الاجتماعية",
+      "domain": "theacss.org",
+      "place": "بيروت، لبنان",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مؤسسة الفكر العربي",
+      "domain": "arabthought.org",
+      "place": "بيروت، لبنان",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مؤسسة مؤمنون بلا حدود",
+      "domain": "mominoun.com",
+      "place": "الرباط، المغرب",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مؤسسة الملك عبد العزيز آل سعود للدراسات الإسلامية والعلوم الإنسانية",
+      "domain": "fondation.org.ma",
+      "place": "الدار البيضاء، المغرب",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مؤسسة الفرقان للتراث الإسلامي",
+      "domain": "al-furqan.com",
+      "place": "لندن، المملكة المتحدة",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مكتبة الإسكندرية",
+      "domain": "bibalex.org",
+      "place": "الإسكندرية، مصر",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "الألكسو",
+      "domain": "alecso.org",
+      "place": "تونس",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "الإيسيسكو",
+      "domain": "icesco.org",
+      "place": "الرباط، المغرب",
+      "events_pages": [],
+      "enabled": true,
+      "type": "مركز بحثي"
+    },
+    {
+      "name": "مجمع اللغة العربية بالقاهرة",
+      "domain": "arabicacademy.gov.eg",
+      "place": "القاهرة، مصر",
+      "type": "مجمع لغوي",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مجمع اللغة العربية بدمشق",
+      "domain": "arabacademy-sy.org",
+      "place": "دمشق، سوريا",
+      "type": "مجمع لغوي",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مجمع اللغة العربية الأردني",
+      "domain": "arabic.jo",
+      "place": "عمّان، الأردن",
+      "type": "مجمع لغوي",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "المجلس الدولي للغة العربية",
+      "domain": "alarabiah.org",
+      "place": "بيروت، لبنان",
+      "type": "مجمع لغوي",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مركز أبوظبي للغة العربية",
+      "domain": "abudhabiculture.ae",
+      "place": "أبوظبي، الإمارات",
+      "type": "مركز بحثي",
+      "fields": [
+        "لغة عربية وأدب",
+        "ترجمة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مركز دراسات الوحدة العربية",
+      "domain": "caus.org.lb",
+      "place": "بيروت، لبنان",
+      "type": "مركز بحثي",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مركز الجزيرة للدراسات",
+      "domain": "studies.aljazeera.net",
+      "place": "الدوحة، قطر",
+      "type": "مركز بحثي",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مركز الإمارات للدراسات والبحوث الاستراتيجية",
+      "domain": "ecssr.ae",
+      "place": "أبوظبي، الإمارات",
+      "type": "مركز بحثي",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "المعهد العالمي للفكر الإسلامي",
+      "domain": "iiit.org",
+      "place": "هيرندن، الولايات المتحدة",
+      "type": "مركز بحثي",
+      "fields": [
+        "دراسات إسلامية"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "معهد العالم العربي",
+      "domain": "imarabe.org",
+      "place": "باريس، فرنسا",
+      "type": "مركز بحثي",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "هيئة المخطوطات الإسلامية (TIMA)",
+      "domain": "islamicmanuscript.org",
+      "place": "كامبريدج، المملكة المتحدة",
+      "type": "مركز بحثي",
+      "fields": [
+        "دراسات إسلامية",
+        "تاريخ"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الاتحاد العربي للمكتبات والمعلومات (اعلم)",
+      "domain": "arab-afli.org",
+      "place": "—",
+      "type": "اتحاد",
+      "fields": [
+        "مكتبات ومعلومات"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الرابطة المحمدية للعلماء",
+      "domain": "arrabita.ma",
+      "place": "الرباط، المغرب",
+      "type": "مركز بحثي",
+      "fields": [
+        "دراسات إسلامية"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الأرشيف والمكتبة الوطنية",
+      "domain": "na.ae",
+      "place": "أبوظبي، الإمارات",
+      "type": "مركز بحثي",
+      "fields": [
+        "ترجمة",
+        "تاريخ"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "اتحاد الجامعات العربية",
+      "domain": "aaru.edu.jo",
+      "place": "عمّان، الأردن",
+      "type": "اتحاد",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "المجلس الأعلى للثقافة",
+      "domain": "scc.gov.eg",
+      "place": "القاهرة، مصر",
+      "type": "مركز بحثي",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "دارة الملك عبدالعزيز",
+      "domain": "darah.org.sa",
+      "place": "الرياض، السعودية",
+      "type": "مركز بحثي",
+      "fields": [
+        "تاريخ"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة الملك فيصل",
+      "domain": "kingfaisalprize.org",
+      "place": "الرياض، السعودية",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة الشيخ زايد للكتاب",
+      "domain": "zayedaward.ae",
+      "place": "أبوظبي، الإمارات",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مؤسسة سلطان بن علي العويس الثقافية",
+      "domain": "alowais.com",
+      "place": "دبي، الإمارات",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مؤسسة الكويت للتقدم العلمي",
+      "domain": "kfas.org",
+      "place": "الكويت",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة عبد الحميد شومان للباحثين العرب",
+      "domain": "shoman.org",
+      "place": "عمّان، الأردن",
+      "type": "جائزة",
+      "home": "https://shoman.org/ResearchersAward",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة كابسارك للغة العربية",
+      "domain": "kapsarc.org",
+      "place": "الرياض، السعودية",
+      "type": "جائزة",
+      "home": "https://www.kapsarc.org/ar/kapsarc-arabic-award/",
+      "kind": "جائزة",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة الشيخ حمد للترجمة والتفاهم الدولي",
+      "domain": "hta.qa",
+      "place": "الدوحة، قطر",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "fields": [
+        "ترجمة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "معهد بيرغرون (جائزة ومسابقة المقالة الفلسفية)",
+      "domain": "berggruen.org",
+      "place": "لوس أنجلوس، الولايات المتحدة",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "fields": [
+        "فلسفة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة هولبرغ",
+      "domain": "holbergprize.org",
+      "place": "بيرغن، النرويج",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مؤسسة بالزان الدولية",
+      "domain": "balzan.org",
+      "place": "ميلانو، إيطاليا",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جائزة تمبلتون",
+      "domain": "templetonprize.org",
+      "place": "الولايات المتحدة",
+      "type": "جائزة",
+      "kind": "جائزة",
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "رابطة دراسات الشرق الأوسط (MESA)",
+      "domain": "mesana.org",
+      "place": "الولايات المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "دراسات الشرق الأوسط"
+      ],
+      "events_pages": [
+        "https://mesana.org/awards"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية البريطانية لدراسات الشرق الأوسط (BRISMES)",
+      "domain": "brismes.ac.uk",
+      "place": "المملكة المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "دراسات الشرق الأوسط"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الاتحاد الأوروبي للمستعربين والمستشرقين (UEAI)",
+      "domain": "ueai.org",
+      "place": "أوروبا",
+      "type": "جمعية دولية",
+      "fields": [
+        "لغة عربية وأدب",
+        "دراسات إسلامية"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الدولية لتاريخ العلوم والفلسفة العربية والإسلامية",
+      "domain": "sihspai.org",
+      "place": "باريس، فرنسا",
+      "type": "جمعية دولية",
+      "fields": [
+        "فلسفة",
+        "تاريخ"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "مجموعة ACL لمعالجة العربية (SIGARAB)",
+      "domain": "sigarab.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "لسانيات وحوسبة لغوية"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الدولية للحوسبة والفلسفة (IACAP)",
+      "domain": "iacap.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "فلسفة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الاتحاد الدولي للجمعيات الفلسفية (FISP)",
+      "domain": "fisp.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "فلسفة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الفلسفية الأمريكية (APA)",
+      "domain": "apaonline.org",
+      "place": "الولايات المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "فلسفة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "جمعية الفلسفة والتقنية (SPT)",
+      "domain": "spt.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "فلسفة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الأكاديمية الأمريكية للأديان (AAR)",
+      "domain": "aarweb.org",
+      "place": "الولايات المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "دراسات إسلامية"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الدولية لتاريخ الأديان (IAHR)",
+      "domain": "iahr.dk",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "دراسات إسلامية",
+        "تاريخ"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الدولية لسوسيولوجيا الدين (ISSR)",
+      "domain": "sisr-issr.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "علم اجتماع"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الدولية لعلم الاجتماع (ISA)",
+      "domain": "isa-sociology.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "علم اجتماع"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الأمريكية للأنثروبولوجيا (AAA)",
+      "domain": "americananthro.org",
+      "place": "الولايات المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "أنثروبولوجيا"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الأوروبية للأنثروبولوجيا الاجتماعية (EASA)",
+      "domain": "easaonline.org",
+      "place": "أوروبا",
+      "type": "جمعية دولية",
+      "fields": [
+        "أنثروبولوجيا"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الرابطة الدولية لدراسات الترجمة والثقافات (IATIS)",
+      "domain": "iatis.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "ترجمة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية الأوروبية لدراسات الترجمة (EST)",
+      "domain": "est-translationstudies.org",
+      "place": "أوروبا",
+      "type": "جمعية دولية",
+      "fields": [
+        "ترجمة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الاتحاد الدولي للمترجمين (FIT)",
+      "domain": "fit-ift.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "fields": [
+        "ترجمة"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الجمعية اللسانية الأمريكية (LSA)",
+      "domain": "linguisticsociety.org",
+      "place": "الولايات المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "لسانيات وحوسبة لغوية"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "الرابطة الأمريكية لأساتذة العربية (AATA)",
+      "domain": "aataweb.org",
+      "place": "الولايات المتحدة",
+      "type": "جمعية دولية",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "events_pages": [],
+      "enabled": true
+    },
+    {
+      "name": "تحالف منظمات الإنسانيات الرقمية (ADHO)",
+      "domain": "adho.org",
+      "place": "دولي",
+      "type": "جمعية دولية",
+      "events_pages": [],
+      "enabled": true
+    }
   ],
-  "max_new_per_run": 20,
+  "max_new_per_run": 40,
   "_شرح_prune_after_days": "حذف الإعلانات التي انتهت منذ أكثر من هذا العدد من الأيام؛ 0 = لا حذف أبدًا",
   "prune_after_days": 0,
   "ai": {
@@ -70,23 +879,427 @@
     "general_search": true,
     "_شرح_universities": "يبحث في مواقع الجامعات المذكورة في universities ومراكزها البحثية (النطاقات الفرعية تدخل تلقائيًا)، عددًا منها في كل بحث",
     "universities_per_search": 8,
-    "searches_per_university_group": 6
+    "searches_per_university_group": 6,
+    "_شرح_max_university_groups": "أقصى عدد من مجموعات الجامعات في كل تشغيل ذكي، لضبط التكلفة؛ تتناوب المجموعات أسبوعيًا حتى تُغطّى القائمة كلها. 0 = كلها في كل مرة",
+    "max_university_groups": 5
   },
-  "_شرح_sources": "مصادر الوضع المجاني. type: rss لأي خلاصة RSS أو Atom، و upenn لصفحات أقسام call-for-papers.sas.upenn.edu. fields: المجالات الافتراضية لما يأتي من المصدر. اجعلي enabled: false لإيقاف مصدر.",
+  "_شرح_sources": "مصادر الوضع المجاني. type: rss لأي خلاصة RSS أو Atom (follow_links: true لفتح كل إعلان وقراءة مواعيده)، و upenn لأقسام call-for-papers.sas.upenn.edu، و page لصفحة إعلانات يلتقط منها روابط المؤتمرات والجوائز، و news لبحث مجاني في أخبار Bing بعبارة query. fields: المجالات الافتراضية لما يأتي من المصدر. اجعلي enabled: false لإيقاف مصدر.",
   "sources": [
-    {"name": "UPenn CFP – religion", "type": "upenn", "url": "https://call-for-papers.sas.upenn.edu/category/religion", "fields": [], "enabled": true},
-    {"name": "UPenn CFP – translation studies", "type": "upenn", "url": "https://call-for-papers.sas.upenn.edu/category/translation-studies", "fields": ["ترجمة"], "enabled": true},
-    {"name": "UPenn CFP – theory", "type": "upenn", "url": "https://call-for-papers.sas.upenn.edu/category/theory", "fields": ["فلسفة"], "enabled": true},
-    {"name": "UPenn CFP – awards", "type": "upenn", "url": "https://call-for-papers.sas.upenn.edu/category/awards", "fields": [], "kind": "جائزة", "enabled": true},
-    {"name": "UPenn CFP – cultural studies and history", "type": "upenn", "url": "https://call-for-papers.sas.upenn.edu/category/cultural-studies-and-historical-approaches", "fields": ["تاريخ"], "enabled": true},
-    {"name": "WikiCFP – philosophy", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=philosophy", "fields": ["فلسفة"], "enabled": true},
-    {"name": "WikiCFP – linguistics", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=linguistics", "fields": ["لسانيات وحوسبة لغوية"], "enabled": true},
-    {"name": "WikiCFP – history", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=history", "fields": ["تاريخ"], "enabled": true},
-    {"name": "WikiCFP – sociology", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=sociology", "fields": ["علم اجتماع"], "enabled": true},
-    {"name": "WikiCFP – physics", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=physics", "fields": ["فيزياء"], "enabled": false},
-    {"name": "WikiCFP – chemistry", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=chemistry", "fields": ["كيمياء"], "enabled": false},
-    {"name": "WikiCFP – medicine", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=medicine", "fields": ["طب وعلوم صحية"], "enabled": false},
-    {"name": "WikiCFP – engineering", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=engineering", "fields": ["هندسة"], "enabled": false},
-    {"name": "WikiCFP – mathematics", "type": "rss", "url": "http://www.wikicfp.com/cfp/rss?cat=mathematics", "fields": ["رياضيات وحاسوب"], "enabled": false}
-  ]
+    {
+      "name": "UPenn CFP – religion",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/religion",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – translation studies",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/translation-studies",
+      "fields": [
+        "ترجمة"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – theory",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/theory",
+      "fields": [
+        "فلسفة"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – awards",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/awards",
+      "fields": [],
+      "kind": "جائزة",
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – cultural studies and history",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/cultural-studies-and-historical-approaches",
+      "fields": [
+        "تاريخ"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "WikiCFP – philosophy",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=philosophy",
+      "fields": [
+        "فلسفة"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "WikiCFP – linguistics",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=linguistics",
+      "fields": [
+        "لسانيات وحوسبة لغوية"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "WikiCFP – history",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=history",
+      "fields": [
+        "تاريخ"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "WikiCFP – sociology",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=sociology",
+      "fields": [
+        "علم اجتماع"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "WikiCFP – physics",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=physics",
+      "fields": [
+        "فيزياء"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "WikiCFP – chemistry",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=chemistry",
+      "fields": [
+        "كيمياء"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "WikiCFP – medicine",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=medicine",
+      "fields": [
+        "طب وعلوم صحية"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "WikiCFP – engineering",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=engineering",
+      "fields": [
+        "هندسة"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "WikiCFP – mathematics",
+      "type": "rss",
+      "url": "http://www.wikicfp.com/cfp/rss?cat=mathematics",
+      "fields": [
+        "رياضيات وحاسوب"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "PhilEvents – فلسفة الدين",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/575?format=rss",
+      "fields": [
+        "فلسفة",
+        "دراسات إسلامية"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – تاريخ الفلسفة",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/626?format=rss",
+      "fields": [
+        "فلسفة"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – الفلسفة الاجتماعية والسياسية",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/613?format=rss",
+      "fields": [
+        "فلسفة"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – الأخلاق التطبيقية",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/608?format=rss",
+      "fields": [
+        "فلسفة"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – الأخلاق المعيارية",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/602?format=rss",
+      "fields": [
+        "فلسفة"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – فلسفة اللغة",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/574?format=rss",
+      "fields": [
+        "فلسفة",
+        "لسانيات وحوسبة لغوية"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – فلسفة الحوسبة والمعلومات",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/635?format=rss",
+      "fields": [
+        "فلسفة"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "PhilEvents – الفلسفة الآسيوية",
+      "type": "rss",
+      "url": "https://philevents.org/search/topic/581?format=rss",
+      "fields": [
+        "فلسفة"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "H-Announce (H-Net)",
+      "type": "page",
+      "url": "https://networks.h-net.org/h-announce",
+      "fields": [],
+      "max_links": 20,
+      "enabled": true
+    },
+    {
+      "name": "LINGUIST List – calls",
+      "type": "rss",
+      "url": "https://linguistlist.org/issues/rss/calls.xml",
+      "fields": [
+        "لسانيات وحوسبة لغوية"
+      ],
+      "follow_links": true,
+      "max_items": 25,
+      "enabled": true
+    },
+    {
+      "name": "Menalib – مؤتمرات",
+      "type": "page",
+      "url": "https://www.menalib.de/",
+      "fields": [
+        "دراسات الشرق الأوسط"
+      ],
+      "max_links": 15,
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – interdisciplinary",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/interdisciplinary",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – ethnicity-and-national",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/ethnicity-and-national",
+      "fields": [],
+      "enabled": false
+    },
+    {
+      "name": "UPenn CFP – postcolonial",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/postcolonial",
+      "fields": [
+        "دراسات الشرق الأوسط"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "UPenn CFP – general-announcements",
+      "type": "upenn",
+      "url": "https://call-for-papers.sas.upenn.edu/category/general-announcements",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: دعوة للمشاركة مؤتمر دولي العلوم الإنسانية",
+      "type": "news",
+      "query": "دعوة للمشاركة مؤتمر دولي العلوم الإنسانية",
+      "lang": "ar",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: استكتاب مؤتمر علمي دولي",
+      "type": "news",
+      "query": "استكتاب مؤتمر علمي دولي",
+      "lang": "ar",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: آخر موعد لاستقبال الملخصات مؤتمر",
+      "type": "news",
+      "query": "آخر موعد لاستقبال الملخصات مؤتمر",
+      "lang": "ar",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: فتح باب الترشح جائزة بحثية",
+      "type": "news",
+      "query": "فتح باب الترشح جائزة بحثية",
+      "lang": "ar",
+      "fields": [],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: مؤتمر دولي اللغة العربية دعوة للمشاركة",
+      "type": "news",
+      "query": "مؤتمر دولي اللغة العربية دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: مؤتمر الدراسات الإسلامية دعوة للمشاركة",
+      "type": "news",
+      "query": "مؤتمر الدراسات الإسلامية دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "دراسات إسلامية"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: مؤتمر دولي الفلسفة دعوة للمشاركة",
+      "type": "news",
+      "query": "مؤتمر دولي الفلسفة دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "فلسفة"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: مؤتمر دولي التاريخ دعوة للمشاركة",
+      "type": "news",
+      "query": "مؤتمر دولي التاريخ دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "تاريخ"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: مؤتمر دولي الترجمة دعوة للمشاركة",
+      "type": "news",
+      "query": "مؤتمر دولي الترجمة دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "ترجمة"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: ملتقى دولي علم الاجتماع دعوة للمشاركة",
+      "type": "news",
+      "query": "ملتقى دولي علم الاجتماع دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "علم اجتماع"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "أخبار: ندوة دولية المخطوطات دعوة للمشاركة",
+      "type": "news",
+      "query": "ندوة دولية المخطوطات دعوة للمشاركة",
+      "lang": "ar",
+      "fields": [
+        "دراسات إسلامية",
+        "تاريخ"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "News: call for papers Arabic studies conference",
+      "type": "news",
+      "query": "call for papers Arabic studies conference",
+      "lang": "en",
+      "fields": [
+        "لغة عربية وأدب"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "News: call for papers Islamic studies conference",
+      "type": "news",
+      "query": "call for papers Islamic studies conference",
+      "lang": "en",
+      "fields": [
+        "دراسات إسلامية"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "News: call for papers Middle East studies conference",
+      "type": "news",
+      "query": "call for papers Middle East studies conference",
+      "lang": "en",
+      "fields": [
+        "دراسات الشرق الأوسط"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "News: call for nominations prize humanities",
+      "type": "news",
+      "query": "call for nominations prize humanities",
+      "lang": "en",
+      "fields": [],
+      "enabled": true
+    }
+  ],
+  "_شرح_read_homepages": "true = الجهات التي ليس لها events_pages تُقرأ صفحتها الرئيسية، فتلتقط منها روابط المؤتمرات والجوائز وتفتحها لتقرأ مواعيدها. home: رابط صفحة بديلة عن الرئيسية.",
+  "read_homepages": true,
+  "parallel": 8
 }

@@ -227,7 +227,10 @@ async function runAI(){
   if($("rememberKey").checked)store(LS_KEY,apiKey);else{try{localStorage.removeItem(LS_KEY)}catch(e){}}
   const fields=prefs.fields.length?prefs.fields:FIELDS;
   const jobs=[{label:"الويب",domains:null}];
-  if($("aiUnis").checked){const d=await uniDomains();for(let i=0;i<d.length;i+=8)jobs.push({label:"مواقع الجامعات والمراكز ("+(i/8+1)+")",domains:d.slice(i,i+8)})}
+  if($("aiUnis").checked){const d=await uniDomains(),groups=[];for(let i=0;i<d.length;i+=8)groups.push(d.slice(i,i+8));
+    // لضبط التكلفة: ثلاث مجموعات فقط في كل بحث، تتغير كل أسبوع حتى تُغطّى القائمة كلها
+    const wk=Math.floor((today-new Date(today.getFullYear(),0,1))/6048e5),st=groups.length?(wk*3)%groups.length:0;
+    [...groups.slice(st),...groups.slice(0,st)].slice(0,3).forEach((g,n)=>jobs.push({label:"مواقع الجامعات والمراكز ("+(n+1)+" من 3)",domains:g}))}
   btn.disabled=true;let added=0,failed=0,lastErr="";
   for(let j=0;j<jobs.length;j++){
     msg.textContent="جارٍ البحث في "+jobs[j].label+"… ("+(j+1)+" من "+jobs.length+"). قد يستغرق دقيقة أو أكثر.";

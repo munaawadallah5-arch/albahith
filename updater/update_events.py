@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -62,10 +63,12 @@ EN_MONTH_RE = r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.
 LABELS = {
     "abstract": ["abstract", "proposal", "ملخص", "الملخصات", "مقترح"],
     "notify": ["notification", "acceptance", "إشعار", "القبول", "النتائج"],
-    "paper": ["deadline", "submission", "full paper", "آخر موعد", "التقديم", "الترشح", "تسليم", "الترشيح"],
+    "paper": ["deadline", "submission", "full paper", "آخر موعد", "التقديم", "الترشح", "تسليم", "الترشيح",
+              "استقبال الأبحاث", "استقبال البحوث", "استلام الأبحاث", "استلام البحوث", "البحوث كاملة", "الأبحاث كاملة"],
     "start": ["conference date", "dates:", "will be held", "takes place", "when", "held on", "event date", "seminar", "symposium",
               "colloquium", "congress", "workshop", "winter school", "summer school", "ينعقد", "انعقاد", "يعقد", "تُعقد",
-              "الندوة", "الملتقى", "المؤتمر في"],
+              "الندوة", "الملتقى", "المؤتمر في", "يومي", "خلال الفترة", "في الفترة من", "المقرر انعقاده",
+              "ستعقد", "سيعقد", "تنطلق", "ينطلق", "يقام", "تقام"],
 }
 
 report = {"added": [], "errors": [], "notes": []}
@@ -145,7 +148,7 @@ def find_dates(text):
         if mo:
             out.append((m.start(), mk_date(m.group(3), mo, m.group(1)), None, m.end()))
     # 14 يونيو 2027 / 14-18 يونيو 2027
-    for m in re.finditer(r"(\d{1,2})(?:\s*[-–—]\s*(\d{1,2}))?\s+(" + AR_MONTH_RE + r")\s*(?:\(\s*[^)]{0,20}\))?\s*(\d{4})", t):
+    for m in re.finditer(r"(\d{1,2})(?:(?:\s*[-–—]\s*|\s+(?:و|إلى|الى|حتى)\s*)(\d{1,2}))?\s+(" + AR_MONTH_RE + r")\s*(?:\(\s*[^)]{0,20}\))?\s*(\d{4})", t):
         mo = MONTHS_AR[m.group(3)]
         out.append((m.start(), mk_date(m.group(4), mo, m.group(1)), mk_date(m.group(4), mo, m.group(2)) if m.group(2) else None, m.end()))
     out = [p for p in out if p[1]]
@@ -215,13 +218,34 @@ def guess_kind(text, default):
     return default or "مؤتمر"
 
 
-def fetch(url, data=None, headers=None, timeout=40):
+def fetch(url, data=None, headers=None, timeout=25):
     req = urllib.request.Request(url, data=data, headers={"User-Agent": "albahith-updater/1.0 (+GitHub Actions)", **(headers or {})})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode(r.headers.get_content_charset() or "utf-8", "replace")
 
 
 # ---------------------------------------------------------------- الطريقة المجانية
+def clean_link(link):
+    """روابط Bing News تمرّ عبر صفحة إحصاء؛ نستخرج منها رابط الخبر الأصلي."""
+    link = (link or "").strip()
+    u = urllib.parse.urlparse(link)
+    if u.netloc.endswith("bing.com") and u.path.endswith("apiclick.aspx"):
+        real = urllib.parse.parse_qs(u.query).get("url", [""])[0]
+        return real or link
+    return link
+
+
+def follow(src, items, only_undated=True):
+    """يفتح صفحة كل عنصر ليقرأ مواعيده، إن لم تكفِ النبذة المختصرة."""
+    for it in items:
+        if only_undated and label_dates(it["text"]):
+            continue
+        try:
+            it["text"] = it["title"] + "\n" + strip_tags(fetch(it["url"]))[:30000]
+        except Exception as e:
+            report["notes"].append(f"{src.get('name')}: تعذّر فتح {it['url']}: {type(e).__name__}")
+
+
 def from_rss(src):
     xml = fetch(src["url"])
     xml = re.sub(r"\sxmlns(:\w+)?=\"[^\"]+\"", "", xml, count=5)
@@ -234,9 +258,22 @@ def from_rss(src):
         if not link:
             le = it.find("link")
             link = le.get("href", "") if le is not None else ""
+        if src.get("require_words") and not any(w in title.lower() for w in PAGE_WORDS):
+            continue
         desc = strip_tags(it.findtext("description") or it.findtext("summary") or it.findtext("content") or "")
-        out.append({"title": title, "url": link.strip(), "text": title + "\n" + desc, "org": "", "place": ""})
+        out.append({"title": title, "url": clean_link(link), "text": title + "\n" + desc, "org": src.get("org", ""), "place": ""})
+        if len(out) >= int(src.get("max_items", 60)):
+            break
+    if src.get("follow_links"):
+        follow(src, out)
     return out
+
+
+def from_news(src):
+    """بحث في أخبار Bing (مجاني، بلا مفتاح): يلتقط ما تنشره الصحف عن دعوات المشاركة في المؤتمرات والجوائز، ثم يقرأ الخبر نفسه."""
+    q = urllib.parse.quote(src["query"])
+    url = f"https://www.bing.com/news/search?q={q}&format=rss&qft=sortbydate%3d%221%22&setlang={src.get('lang', 'ar')}"
+    return from_rss({**src, "url": url, "require_words": True, "follow_links": True, "max_items": src.get("max_items", 15)})
 
 
 def from_upenn(src):
@@ -284,11 +321,7 @@ def from_page(src):
         if len(out) >= int(src.get("max_links", 15)):
             break
     if src.get("follow_links", True):
-        for it in out:
-            try:
-                it["text"] = it["title"] + "\n" + strip_tags(fetch(it["url"]))[:30000]
-            except Exception as e:
-                report["notes"].append(f"{src.get('name')}: تعذّر فتح {it['url']}: {type(e).__name__}")
+        follow(src, out, only_undated=False)
     return out
 
 
@@ -298,20 +331,32 @@ def free_sources(settings):
     for u in settings.get("universities", []):
         if not u.get("enabled", True):
             continue
-        for page in u.get("events_pages", []):
+        pages = list(u.get("events_pages", []))
+        if not pages and settings.get("read_homepages", True) and u.get("domain"):
+            # لا صفحة فعاليات محددة: نقرأ الصفحة الرئيسية وأخبارها، ونلتقط روابط المؤتمرات والجوائز منها
+            pages = [u.get("home") or "https://" + u["domain"].strip("/") + "/"]
+        for page in pages:
             srcs.append({"name": u.get("name", u.get("domain", "")), "type": "page", "url": page,
-                         "org": u.get("name", ""), "place": u.get("place", ""), "fields": []})
+                         "org": u.get("name", ""), "place": u.get("place", ""), "fields": u.get("fields", []),
+                         "kind": u.get("kind"), "max_links": u.get("max_links", 10 if page in u.get("events_pages", []) else 8)})
     return srcs
 
 
 def collect_free(settings):
-    found = []
-    readers = {"upenn": from_upenn, "page": from_page}
-    for src in free_sources(settings):
+    readers = {"upenn": from_upenn, "page": from_page, "news": from_news}
+
+    def read(src):
         try:
-            items = readers.get(src.get("type"), from_rss)(src)
+            return src, readers.get(src.get("type"), from_rss)(src), None
         except Exception as e:  # مصدر معطّل لا يوقف الباقي
-            report["errors"].append(f"{src.get('name')}: {type(e).__name__}: {e}")
+            return src, [], f"{type(e).__name__}: {e}"
+
+    found = []
+    with ThreadPoolExecutor(max_workers=int(settings.get("parallel", 8))) as pool:
+        results = list(pool.map(read, free_sources(settings)))
+    for src, items, err in results:
+        if err:
+            report["errors"].append(f"{src.get('name')}: {err}")
             continue
         for it in items:
             dates = label_dates(it["text"])
@@ -410,8 +455,13 @@ Already known (URL or title):
     # 2) بحث محصور في مواقع الجامعات ومراكزها البحثية (النطاقات الفرعية تدخل تلقائيًا)
     unis = [u for u in settings.get("universities", []) if u.get("enabled", True) and u.get("domain")]
     size = max(1, int(ai.get("universities_per_search", 8)))
-    for i in range(0, len(unis), size):
-        group = unis[i:i + size]
+    groups = [unis[i:i + size] for i in range(0, len(unis), size)]
+    cap = int(ai.get("max_university_groups", 5) or 0)
+    if cap and len(groups) > cap:  # لضبط التكلفة: مجموعات مختلفة كل أسبوع حتى تُغطّى القائمة كلها بالتناوب
+        start = (TODAY.isocalendar()[1] * cap) % len(groups)
+        groups = (groups[start:] + groups[:start])[:cap]
+    for n, group in enumerate(groups):
+        i = n * size
         names = "\n".join(f"- {u.get('name', '')} ({u['domain']})" for u in group)
         prompt = f"""{intro}
 
