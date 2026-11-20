@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الباحث</title>
+<meta name="description" content="الباحث: مرصد المؤتمرات والمسابقات والجوائز البحثية">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a researcher's year planner — calm, exact, every date findable at a glance.
+   IDEA: the wall calendar pinned above a scholar's desk, with deadlines inked in colour.
+   PICTURE: the full-year calendar itself, twelve months, each deadline a coloured mark.
+   COLOUR and TYPE: white paper, black ink, lapis for abstracts, vermilion for papers, ink-filled days for the event; Reem Kufi titles, IBM Plex Sans Arabic text.
+   LAYOUT: alarm strip, interests, the year, then the announcements list and an add form. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#111315);--paper:light-dark(#f4f4f1,#1b1e21);--ink:light-dark(#141414,#ecebe7);--mute:light-dark(#5d5d5a,#a3a29d);--line:light-dark(#dcdcd6,#2e3236);
+--lapis:light-dark(#1d4ed8,#7aa2ff);--verm:light-dark(#d9381e,#ff7a5c);--gold:light-dark(#9a6a00,#e2b552);--grey:light-dark(#8a8a85,#77776f);--evt:light-dark(#141414,#ecebe7);--evtx:light-dark(#fff,#111315)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Reem Kufi","IBM Plex Sans Arabic",sans-serif;line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:clamp(30px,4.4vw,46px)}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}h2{font-size:26px}h3{font-size:18px}
+.band{padding:clamp(22px,3.5vw,48px) max(5vw,16px)}.wrap{max-width:1240px;margin:0 auto}
+.paper{background:var(--paper)}
+.sub{color:var(--mute);margin:.4em 0 0;max-width:70ch}
+button,select,input,textarea{font:inherit;font-size:16px;color:inherit}
+button{cursor:pointer;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--lapis);outline-offset:2px}
+.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+a{color:var(--lapis)}
+/* alarm */
+.alarm{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 20px;align-items:center;border:2px solid var(--ink);border-radius:16px;padding:14px 18px;margin-top:22px}
+.bell{width:48px;height:48px}
+.alarm ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.alarm li{background:var(--paper);border-radius:999px;padding:6px 14px;font-size:14px}
+.alarm li b{font-variant-numeric:tabular-nums}
+.alarm .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.alarm select{min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:0 10px}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{min-height:40px;border-radius:999px;padding:0 14px;font-size:15px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.row input[type=search]{flex:1 1 220px;min-height:44px;border-radius:10px;border:1px solid var(--line);padding:0 12px;background:var(--bg)}
+.row select{min-height:44px;border-radius:10px;border:1px solid var(--line);padding:0 10px;background:var(--bg)}
+/* year */
+.yearhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.yearhead .y{font-family:"Reem Kufi";font-size:40px;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--mute);margin-inline-start:auto}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
+.months{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 26px;margin-top:20px}
+@media(max-width:1000px){.months{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.months{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}
+@media(max-width:420px){.months{grid-template-columns:minmax(0,1fr)}}
+.month h3{font-size:17px;margin-bottom:6px;display:flex;justify-content:space-between}
+.month h3 small{font-family:"IBM Plex Sans Arabic";color:var(--mute);font-size:13px;font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center;font-size:13px;font-variant-numeric:tabular-nums}
+.grid .wd{color:var(--mute);font-size:12px}
+.d{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;border:0;padding:0;min-height:0;background:none;font-size:13px}
+.d.has{font-weight:700;cursor:pointer}
+.d.today{box-shadow:inset 0 0 0 2px var(--gold)}
+.d.evt{background:var(--evt);color:var(--evtx)}
+.d.sel{outline:3px solid var(--lapis);outline-offset:1px}
+.d .dots{position:absolute;bottom:2px;inset-inline:0;display:flex;justify-content:center;gap:2px}
+.d .dots i{width:5px;height:5px;border-radius:50%}
+.d.off{visibility:hidden}
+.dayinfo{margin-top:20px;border-top:2px solid var(--ink);padding-top:12px;min-height:24px}
+.dayinfo ul{margin:6px 0 0;padding-inline-start:20px}
+/* list */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:16px;margin-top:18px}
+.card{border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.card.past{opacity:.62}
+.card header{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.kind{font-size:13px;border-radius:999px;padding:2px 10px;background:var(--paper);white-space:nowrap}
+.org{color:var(--mute);font-size:14px;margin:2px 0 0}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+.tl li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:8px;align-items:center}
+.tl li i{width:10px;height:10px;border-radius:3px}
+.tl li time{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tl li.done{color:var(--mute);text-decoration:line-through}
+.tl .cal{font-size:12px;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--mute)}
+.tags span{border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.acts a.go{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:10px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:700}
+.watch[aria-pressed=true]{background:var(--gold);color:#fff;border-color:var(--gold)}
+.note{font-size:14px;color:var(--mute);margin:0}
+.empty{border:2px dashed var(--line);border-radius:16px;padding:28px;text-align:center;color:var(--mute);margin-top:18px}
+/* form */
+form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px;margin-top:16px;max-width:900px}
+@media(max-width:600px){form{grid-template-columns:minmax(0,1fr)}.alarm{grid-template-columns:auto minmax(0,1fr)}.alarm .ctl{grid-column:1/-1}}
+label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+label input,label select,label textarea{min-height:44px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);color:var(--ink)}
+.full{grid-column:1/-1}
+fieldset{border:1px solid var(--line);border-radius:12px;display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 14px}
+fieldset label{display:flex;gap:6px;align-items:center;color:var(--ink);min-height:32px}
+.toast{position:fixed;inset-inline:16px;bottom:16px;margin:auto;max-width:520px;background:var(--ink);color:var(--bg);padding:14px 18px;border-radius:14px;box-shadow:0 10px 30px #0004;display:none;z-index:9}
+.toast.on{display:block;animation:up .3s ease}
+@keyframes up{from{transform:translateY(20px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.toast.on{animation:none}}
+.status{font-size:13px;color:var(--mute);margin-top:8px}
+textarea.ics{width:100%;min-height:120px;font:12px/1.4 monospace;direction:ltr;margin-top:8px}
+</style>
+</head>
+<body>
+<section class="band"><div class="wrap">
+  <h1 class="brand" aria-label="الباحث">
+    <svg width="72" height="72" viewBox="0 0 200 200" aria-hidden="true"><circle cx="86" cy="86" r="60" fill="none" stroke="currentColor" stroke-width="14"/><line x1="130" y1="130" x2="178" y2="178" stroke="currentColor" stroke-width="22" stroke-linecap="round"/><g fill="currentColor"><rect x="56" y="56" width="16" height="16" rx="3"/><rect x="78" y="56" width="16" height="16" rx="3"/><rect x="100" y="56" width="16" height="16" rx="3"/><rect x="56" y="78" width="16" height="16" rx="3"/><rect x="78" y="78" width="16" height="16" rx="3"/><rect x="56" y="100" width="16" height="16" rx="3"/><rect x="78" y="100" width="16" height="16" rx="3"/></g><rect x="100" y="78" width="16" height="16" rx="3" fill="#d62828"/></svg>
+    <svg width="200" height="78" viewBox="0 0 200 78" aria-hidden="true" style="overflow:visible"><defs><clipPath id="baDot"><rect x="0" y="58" width="200" height="30"/></clipPath></defs><text x="100" y="55" text-anchor="middle" direction="rtl" fill="currentColor" style="font:700 52px 'Reem Kufi',sans-serif">الباحث</text><text x="100" y="55" text-anchor="middle" direction="rtl" fill="#d62828" clip-path="url(#baDot)" style="font:700 52px 'Reem Kufi',sans-serif">الباحث</text></svg>
+  </h1>
+  <p class="sub">مرصد المؤتمرات والمسابقات والجوائز البحثية</p>
+  <div class="alarm" aria-live="polite">
+    <svg class="bell" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c-7 0-12 5.5-12 13v8l-4 6h32l-4-6v-8c0-7.5-5-13-12-13z" fill="#d62828"/><path d="M24 6c-7 0-12 5.5-12 13v8l-4 6h16z" fill="#0002"/><circle cx="24" cy="38" r="4" fill="var(--ink)"/></svg>
+    <div><strong id="alarmTitle">المنبّه</strong><ul id="alarmList"></ul></div>
+    <div class="ctl">
+      <label style="display:flex;align-items:center;gap:6px;color:var(--ink)">نبّهني قبل
+        <select id="lead"><option value="1">يوم</option><option value="3">3 أيام</option><option value="7" selected>أسبوع</option><option value="14">أسبوعين</option><option value="30">شهر</option></select></label>
+      <button id="sound" type="button" aria-pressed="false">تشغيل التنبيه</button>
+      <button id="dlIcs" type="button">تنزيل ملف التقويم</button>
+    </div>
+  </div>
+  <h2 style="margin-top:28px;font-size:20px">مجالات اهتمامك</h2>
+  <div class="chips" id="fieldChips"></div>
+  <div class="row">
+    <input type="search" id="q" placeholder="ابحث باسم المؤتمر أو الجهة أو البلد" aria-label="بحث">
+    <select id="kindF" aria-label="النوع"><option value="">كل الأنواع</option></select>
+    <label style="display:flex;align-items:center;gap:6px;color:var(--ink)"><input type="checkbox" id="showPast"> إظهار ما انتهى</label>
+  </div>
+  <p class="status" id="status"></p>
+</div></section>
+
+<section class="band paper"><div class="wrap">
+  <div class="yearhead">
+    <button type="button" id="prevY" aria-label="السنة السابقة">→</button>
+    <span class="y" id="yLabel"></span>
+    <button type="button" id="nextY" aria-label="السنة التالية">←</button>
+    <div class="legend">
+      <span><i style="background:var(--grey)"></i>الإعلان</span>
+      <span><i style="background:var(--lapis)"></i>تسليم الملخصات</span>
+      <span><i style="background:var(--verm)"></i>تسليم البحث / آخر موعد للتقديم</span>
+      <span><i style="background:var(--gold)"></i>إعلان القبول أو النتائج</span>
+      <span><i style="background:var(--evt)"></i>الانعقاد أو الحفل</span>
+    </div>
+  </div>
+  <div class="months" id="months"></div>
+  <div class="dayinfo" id="dayinfo"><span class="note">اختر يومًا ملوّنًا لترى ما فيه.</span></div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <h2>الإعلانات</h2>
+  <div id="cards" class="cards"></div>
+  <div id="empty" class="empty" hidden></div>
+</div></section>
+
+<section class="band paper" id="addSec"><div class="wrap">
+  <h2>إضافة إعلان</h2>
+  <p class="sub">يُحفظ الإعلان في متصفحك فورًا. ولينشر لكل زوار الموقع، نزّلي ملف الإعلانات المحدّث وارفعيه مكان الملف القديم. التواريخ اختيارية، أدخلي ما هو معلن منها.</p>
+  <form id="addForm">
+    <label class="full">العنوان<input name="title" required maxlength="200"></label>
+    <label>الجهة المنظمة<input name="org" maxlength="160"></label>
+    <label>البلد / المدينة<input name="place" maxlength="100"></label>
+    <label>النوع<select name="kind" id="kindSel"></select></label>
+    <label>رابط صفحة الإعلان<input name="url" type="url" required placeholder="https://"></label>
+    <fieldset class="full" id="fieldBoxes"><legend>المجالات</legend></fieldset>
+    <label>تاريخ الإعلان<input type="date" name="announced"></label>
+    <label>آخر موعد لتسليم الملخصات<input type="date" name="abstract"></label>
+    <label>آخر موعد لتسليم البحث أو التقديم<input type="date" name="paper"></label>
+    <label>إعلان القبول أو النتائج<input type="date" name="notify"></label>
+    <label>بدء الانعقاد أو الحفل<input type="date" name="start"></label>
+    <label>نهايته<input type="date" name="end"></label>
+    <label class="full">ملاحظة<textarea name="note" maxlength="400" rows="2"></textarea></label>
+    <div class="full"><button class="primary" type="submit">حفظ الإعلان</button> <button type="button" id="dlEvents">تنزيل ملف الإعلانات المحدّث</button> <span class="status" id="addMsg"></span></div>
+  </form>
+</div></section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="events.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
