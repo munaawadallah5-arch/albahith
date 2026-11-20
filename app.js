@@ -299,5 +299,24 @@ function homeSummary(){
   const hs=$("homeStatus");if(hs)hs.textContent=f?`في مجالاتك (${prefs.fields.join("، ")}): ${n} إعلانًا.`:`لم تختر مجالاتك بعد؛ تُعرض كل الإعلانات (${n}). اختر مجالاتك من صفحة «الإعلانات».`;
 }
 
+/* المظهر: تلقائي (بحسب الجهاز) أو فاتح أو داكن */
+const LS_THEME="albahith-theme",darkMQ=matchMedia("(prefers-color-scheme: dark)");
+const MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+function applyTheme(t){
+  t=["light","dark"].includes(t)?t:"auto";
+  if(t==="auto")delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=t;
+  try{t==="auto"?localStorage.removeItem(LS_THEME):localStorage.setItem(LS_THEME,t)}catch(e){}
+  const dark=t==="dark"||(t==="auto"&&darkMQ.matches);
+  document.querySelector('meta[name="theme-color"]').content=dark?"#111315":"#ffffff";
+  const b=$("themeBtn");b.innerHTML=dark?SUN:MOON;b.title=b.ariaLabel=dark?"الوضع الفاتح":"الوضع الداكن";
+  document.querySelectorAll('input[name="theme"]').forEach(r=>r.checked=r.value===t);
+}
+let curTheme;try{curTheme=localStorage.getItem(LS_THEME)}catch(e){}
+applyTheme(curTheme);
+$("themeBtn").onclick=()=>{const dark=document.documentElement.dataset.theme==="dark"||(!document.documentElement.dataset.theme&&darkMQ.matches);applyTheme(dark?"light":"dark")};
+document.querySelectorAll('input[name="theme"]').forEach(r=>r.addEventListener("change",()=>applyTheme(r.value)));
+darkMQ.addEventListener("change",()=>{if(!document.documentElement.dataset.theme)applyTheme("auto")});
+
 renderAll();
 })();

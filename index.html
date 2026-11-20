@@ -9,6 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#ffffff">
+<script>/* المظهر المختار يُطبَّق قبل ظهور الصفحة كي لا تومض بالفاتح */try{var t=localStorage.getItem("albahith-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="الباحث">
@@ -135,6 +136,11 @@ fieldset label{display:flex;gap:6px;align-items:center;color:var(--ink);min-heig
 .monthnav{display:none}
 .page>.band{padding-top:clamp(18px,2.5vw,32px)}
 .top{padding-bottom:10px}
+.topwrap{position:relative}
+.themeBtn{position:absolute;top:4px;left:0;width:46px;padding:0;display:grid;place-items:center;border-radius:999px;color:var(--ink)}
+.themeBtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.themes{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:700px){.themes{grid-template-columns:minmax(0,1fr)}}
 .top .sub{margin-bottom:0}
 .tabs{position:sticky;top:0;z-index:40;display:flex;gap:4px;justify-content:center;background:var(--bg);border-bottom:1px solid var(--line);padding:6px max(5vw,16px)}
 .tabs a{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:10px;color:var(--mute);text-decoration:none;font-weight:600}
@@ -174,7 +180,8 @@ textarea.ics{width:100%;min-height:120px;font:12px/1.4 monospace;direction:ltr;m
 </style>
 </head>
 <body>
-<header class="band top"><div class="wrap">
+<header class="band top"><div class="wrap topwrap">
+  <button type="button" id="themeBtn" class="themeBtn" aria-label="الوضع الداكن" title="الوضع الداكن"></button>
   <h1 class="brand" aria-label="الباحث">
     <svg width="72" height="72" viewBox="0 0 200 200" aria-hidden="true"><circle cx="86" cy="86" r="60" fill="none" stroke="currentColor" stroke-width="14"/><line x1="130" y1="130" x2="178" y2="178" stroke="currentColor" stroke-width="22" stroke-linecap="round"/><g fill="currentColor"><rect x="56" y="56" width="16" height="16" rx="3"/><rect x="78" y="56" width="16" height="16" rx="3"/><rect x="100" y="56" width="16" height="16" rx="3"/><rect x="56" y="78" width="16" height="16" rx="3"/><rect x="78" y="78" width="16" height="16" rx="3"/><rect x="56" y="100" width="16" height="16" rx="3"/><rect x="78" y="100" width="16" height="16" rx="3"/></g><rect x="100" y="78" width="16" height="16" rx="3" fill="#d62828"/></svg>
     <svg width="200" height="78" viewBox="0 0 200 78" aria-hidden="true" style="overflow:visible"><defs><clipPath id="baDot"><rect x="0" y="58" width="200" height="30"/></clipPath></defs><text x="100" y="55" text-anchor="middle" direction="rtl" fill="currentColor" style="font:700 52px 'Reem Kufi',sans-serif">الباحث</text><text x="100" y="55" text-anchor="middle" direction="rtl" fill="#d62828" clip-path="url(#baDot)" style="font:700 52px 'Reem Kufi',sans-serif">الباحث</text></svg>
@@ -260,6 +267,12 @@ textarea.ics{width:100%;min-height:120px;font:12px/1.4 monospace;direction:ltr;m
 </div></div></section>
 
 <section class="page" data-page="settings" hidden><div class="band"><div class="wrap">
+  <h2 style="font-size:20px;margin-top:0">المظهر</h2>
+  <div class="modes themes" role="radiogroup" aria-label="المظهر">
+    <label class="modeopt"><input type="radio" name="theme" value="auto" checked><span><b>تلقائي</b><small>فاتح أو داكن بحسب إعداد جهازك.</small></span></label>
+    <label class="modeopt"><input type="radio" name="theme" value="light"><span><b>فاتح</b><small>خلفية بيضاء.</small></span></label>
+    <label class="modeopt"><input type="radio" name="theme" value="dark"><span><b>داكن</b><small>خلفية داكنة، أريح للعين ليلًا.</small></span></label>
+  </div>
   <h2 style="margin-top:24px;font-size:20px">مصدر الإعلانات</h2>
   <div class="modes" role="radiogroup" aria-label="مصدر الإعلانات">
     <label class="modeopt"><input type="radio" name="srcmode" value="free" checked><span><b>النسخة المجانية</b><small>الإعلانات المشتركة في الموقع، وتُحدَّث كل أسبوع للجميع.</small></span></label>

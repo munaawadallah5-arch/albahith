@@ -1,6 +1,6 @@
 // عامل الخدمة لتطبيق «الباحث»: يجعل الموقع قابلًا للتثبيت ويعمل دون إنترنت.
 // ملفات الموقع تُطلب من الشبكة أولًا (لتصل الإعلانات الجديدة فورًا)، وعند انقطاع الإنترنت تُعرض آخر نسخة محفوظة.
-const CACHE = "albahith-v3";
+const CACHE = "albahith-v4";
 const CORE = ["./", "index.html", "app.js", "events.js", "logo.svg", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-icon.png"];
 
