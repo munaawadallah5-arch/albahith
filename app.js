@@ -266,7 +266,7 @@ setMode(prefs.srcmode||"free");
 (function(){
   const box=$("installBox"),btn=$("installBtn"),hint=$("installHint");
   const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
-  if("serviceWorker" in navigator&&isSecureContext)navigator.serviceWorker.register("sw.js").catch(()=>{});
+  if("serviceWorker" in navigator&&isSecureContext)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
   if(standalone)return;   // التطبيق مثبّت ومفتوح كتطبيق
   let deferred=null;
   addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;box.hidden=false;btn.hidden=false;hint.textContent="يضع «الباحث» بين تطبيقاتك، ويفتح في نافذته الخاصة، ويعمل دون إنترنت."});
