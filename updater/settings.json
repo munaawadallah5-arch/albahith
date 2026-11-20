@@ -965,7 +965,7 @@
       "type": "rss",
       "url": "http://www.wikicfp.com/cfp/rss?cat=physics",
       "fields": [
-        "فيزياء"
+        "العلوم الطبيعية"
       ],
       "enabled": false
     },
@@ -974,7 +974,7 @@
       "type": "rss",
       "url": "http://www.wikicfp.com/cfp/rss?cat=chemistry",
       "fields": [
-        "كيمياء"
+        "العلوم الطبيعية"
       ],
       "enabled": false
     },
