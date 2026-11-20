@@ -79,7 +79,7 @@ function renderCards(){
       <ul class="tl">${evDates(ev).map(x=>{const dd=days(x.v);return `<li class="${dd<0?"done":""}"><i style="background:var(${x.c})"></i><span>${esc(stageLabel(ev,x.k))} <time>${fmt(x.v)}</time></span>${dd>=0?`<a class="cal" href="${esc(gcal(ev,x))}" target="_blank" rel="noopener">أضف للتقويم</a>`:"<span></span>"}</li>`}).join("")||`<li><span></span><span class="note">لم تُعلن المواعيد بعد</span><span></span></li>`}</ul>
       ${nd?`<p class="note"><b style="color:var(--ink)">القادم: ${esc(stageLabel(ev,nd.k))} ${days(nd.v)===0?"اليوم":"بعد "+days(nd.v)+" يومًا"}</b></p>`:""}
       ${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}
-      <div class="tags">${(ev.fields||[]).map(f=>`<span>${esc(f)}</span>`).join("")}${ev.local?`<span>أضفتِه في هذا المتصفح</span>`:""}</div>
+      <div class="tags">${(ev.fields||[]).map(f=>`<span>${esc(f)}</span>`).join("")}${ev.local?(ev.source==="ai"?`<span>من بحثك الذكي</span>`:`<span>أضفتِه في هذا المتصفح</span>`):""}</div>
       <div class="acts">${u?`<a class="go" href="${esc(u)}" target="_blank" rel="noopener">صفحة الإعلان ↖</a>`:""}
         <button type="button" class="watch" data-w="${esc(ev.id)}" aria-pressed="${w}">${w?"المنبّه مفعّل":"ذكّرني"}</button>
         ${ev.local?`<button type="button" data-del="${esc(ev.id)}">حذف</button>`:""}</div>
@@ -88,7 +88,7 @@ function renderCards(){
   if(!events.length){e.hidden=false;e.textContent="لا إعلانات بعد. تأكدي أن ملف events.js موجود بجانب index.html."}
   else if(!vis.length){e.hidden=false;e.textContent="لا إعلانات تطابق اختياراتك. جرّبي توسيع المجالات أو إظهار ما انتهى."}
   else e.hidden=true;
-  $("status").textContent=events.length+" إعلانًا"+(localEvents.length?" (منها "+localEvents.length+" أضفتِها في هذا المتصفح)":"");
+  $("status").textContent=events.length+" إعلانًا"+(localEvents.length?" (منها "+localEvents.length+" محفوظة في هذا المتصفح فقط)":"");
 }
 function pool(){return prefs.watch.length?events.filter(ev=>prefs.watch.includes(ev.id)):visible()}
 function alarmItems(){
@@ -156,6 +156,100 @@ $("addForm").addEventListener("submit",e=>{e.preventDefault();const fd=new FormD
   localEvents=[...localEvents,doc];store(LS_LOCAL,localEvents);rebuild();e.target.reset();renderAll();
   $("addMsg").textContent="حُفظ الإعلان في هذا المتصفح. لينشر لكل الزوار: نزّلي ملف الإعلانات المحدّث وارفعيه مكان القديم."});
 $("dlEvents").onclick=()=>download("events.js",eventsFile(),"text/javascript");
+
+/* البحث الذكي من متصفح الزائر بمفتاحه الخاص في Claude */
+const LS_KEY="albahith-claude-key";
+let apiKey=load(LS_KEY,"");
+function hashId(t){let h=0;for(const c of t)h=(h*31+c.codePointAt(0))|0;return (h>>>0).toString(36)}
+const normUrl=u=>String(u||"").toLowerCase().replace(/^https?:\/\/(www\.)?/,"").replace(/[#?].*$/,"").replace(/\/+$/,"");
+function setMode(m){prefs.srcmode=m==="ai"?"ai":"free";savePrefs();
+  document.querySelectorAll('input[name="srcmode"]').forEach(r=>r.checked=r.value===prefs.srcmode);
+  $("aiBox").hidden=prefs.srcmode!=="ai";
+  if(apiKey){$("apiKey").value=apiKey;$("rememberKey").checked=!!load(LS_KEY,"")}}
+function aiPrompt(fields,domains,limit){
+  const known=events.map(e=>"- "+e.title+" | "+(e.url||"")).slice(0,150).join("\n");
+  const where=domains?"Search ONLY these university and research-center websites (their calendars, news, events and call-for-papers pages): "+domains.join(", ")+".":"Use web search (Arabic and English queries) across the open web.";
+  return `Today is ${todayKey}. You are the research assistant of «الباحث», an Arabic site that tracks academic conferences, competitions, prizes, grants and summer/winter schools.
+
+${where}
+Find CURRENT announcements (calls for papers, calls for nominations, competitions, prizes, grants) with at least one date after today, in these fields: ${fields.join("، ")}.
+
+Rules:
+- Only real announcements you found on the web, with the OFFICIAL page URL of the announcement. Never invent dates or URLs; omit a date you did not see.
+- Skip anything whose URL or title is already known (list below).
+- At most ${limit} items.
+- Write title, org, place and note in Arabic (keep official names of foreign bodies, transliterated or in parentheses).
+
+Answer with ONLY a JSON array, no prose, each item:
+{"title": "...", "org": "...", "place": "City, Country in Arabic", "kind": one of ${JSON.stringify(KINDS)},
+ "url": "https://...", "fields": subset of ${JSON.stringify(fields)},
+ "dates": {"announced": "YYYY-MM-DD", "abstract": "...", "paper": "...", "notify": "...", "start": "...", "end": "..."},
+ "note": "one short Arabic sentence: eligibility or language, if stated"}
+(dates keys: abstract = abstract/proposal deadline; paper = full paper or application/nomination deadline; notify = acceptance or results; start/end = event or ceremony dates.)
+
+Already known:
+${known||"(none)"}`;
+}
+async function askClaude(prompt,domains){
+  const tool={type:"web_search_20250305",name:"web_search",max_uses:8};
+  if(domains)tool.allowed_domains=domains;
+  const messages=[{role:"user",content:prompt}];let text="";
+  for(let i=0;i<5;i++){
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"x-api-key":apiKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-5-5",max_tokens:8000,tools:[tool],messages})});
+    let data={};try{data=await r.json()}catch(e){}
+    if(!r.ok){const m=(data.error&&data.error.message)||("HTTP "+r.status);const err=new Error(m);err.status=r.status;throw err}
+    const content=data.content||[];
+    text+=content.filter(b=>b.type==="text").map(b=>b.text).join("");
+    if(data.stop_reason!=="pause_turn")break;
+    messages.push({role:"assistant",content});
+  }
+  return text;
+}
+function parseItems(text){const a=text.indexOf("["),b=text.lastIndexOf("]");if(a<0||b<a)return [];try{const v=JSON.parse(text.slice(a,b+1));return Array.isArray(v)?v:[]}catch(e){return []}}
+function cleanItem(it,fields){
+  if(!it||typeof it!=="object")return null;
+  const url=String(it.url||"").trim(),title=String(it.title||"").trim();
+  if(!/^https:\/\//i.test(url)||!title)return null;
+  const dates={};STAGES.forEach(([k])=>{const v=it.dates&&String(it.dates[k]||"");if(parse(v))dates[k]=v});
+  if(!Object.entries(dates).some(([k,v])=>k!=="announced"&&days(v)>=0))return null;
+  let fs=(Array.isArray(it.fields)?it.fields:[]).filter(f=>FIELDS.includes(f));if(!fs.length)fs=fields.slice(0,1);
+  return {id:"my-"+hashId(normUrl(url)+"|"+title),title:title.slice(0,200),org:String(it.org||"").slice(0,150),place:String(it.place||"").slice(0,100),
+    kind:KINDS.includes(it.kind)?it.kind:"مؤتمر",url,fields:fs,dates,note:String(it.note||"").slice(0,300),source:"ai",added:todayKey};
+}
+let uniCache=null;
+async function uniDomains(){if(uniCache)return uniCache;try{const r=await fetch("updater/settings.json",{cache:"no-store"});const s=await r.json();
+  uniCache=(s.universities||[]).filter(u=>u.enabled!==false&&u.domain).map(u=>String(u.domain).replace(/^https?:\/\//,"").replace(/\/.*$/,""))}catch(e){uniCache=[]}return uniCache}
+async function runAI(){
+  const msg=$("aiMsg"),btn=$("aiRun");
+  apiKey=$("apiKey").value.trim();
+  if(!/^sk-ant-/.test(apiKey)){msg.textContent="أدخل مفتاح Claude API (يبدأ بـ sk-ant-).";$("apiKey").focus();return}
+  if($("rememberKey").checked)store(LS_KEY,apiKey);else{try{localStorage.removeItem(LS_KEY)}catch(e){}}
+  const fields=prefs.fields.length?prefs.fields:FIELDS;
+  const jobs=[{label:"الويب",domains:null}];
+  if($("aiUnis").checked){const d=await uniDomains();for(let i=0;i<d.length;i+=8)jobs.push({label:"مواقع الجامعات والمراكز ("+(i/8+1)+")",domains:d.slice(i,i+8)})}
+  btn.disabled=true;let added=0,failed=0,lastErr="";
+  for(let j=0;j<jobs.length;j++){
+    msg.textContent="جارٍ البحث في "+jobs[j].label+"… ("+(j+1)+" من "+jobs.length+"). قد يستغرق دقيقة أو أكثر.";
+    try{
+      const items=parseItems(await askClaude(aiPrompt(fields,jobs[j].domains,15),jobs[j].domains));
+      const seen=new Set(events.map(e=>normUrl(e.url))),seenT=new Set(events.map(e=>e.title.trim()));
+      const fresh=items.map(it=>cleanItem(it,fields)).filter(e=>e&&!seen.has(normUrl(e.url))&&!seenT.has(e.title));
+      if(fresh.length){localEvents=[...localEvents,...fresh];store(LS_LOCAL,localEvents);rebuild();renderAll();added+=fresh.length}
+    }catch(err){
+      if(err.status===401||err.status===403){msg.textContent="المفتاح غير صحيح أو لا يملك صلاحية. تأكد منه في console.anthropic.com.";btn.disabled=false;return}
+      failed++;lastErr=err.message||String(err);
+      if(err.status===429||/credit|balance|billing/i.test(lastErr))break;
+    }
+  }
+  btn.disabled=false;
+  msg.textContent=(added?"وُجد "+added+" إعلانًا جديدًا وأُضيف إلى القائمة (يظهر لك وحدك).":"لم يُعثر على إعلانات جديدة غير موجودة في القائمة.")+(failed?" تعذّر جزء من البحث: "+lastErr:"");
+  if(added)toast("أضاف البحث الذكي "+added+" إعلانًا إلى قائمتك.");
+}
+document.querySelectorAll('input[name="srcmode"]').forEach(r=>r.addEventListener("change",()=>setMode(r.value)));
+$("aiRun").onclick=runAI;
+$("rememberKey").onchange=e=>{if(!e.target.checked){try{localStorage.removeItem(LS_KEY)}catch(x){}}};
+setMode(prefs.srcmode||"free");
 
 renderAll();
 })();

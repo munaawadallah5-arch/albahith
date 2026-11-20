@@ -97,6 +97,18 @@ label input,label select,label textarea{min-height:44px;border:1px solid var(--l
 .full{grid-column:1/-1}
 fieldset{border:1px solid var(--line);border-radius:12px;display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 14px}
 fieldset label{display:flex;gap:6px;align-items:center;color:var(--ink);min-height:32px}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+@media(max-width:700px){.modes{grid-template-columns:minmax(0,1fr)}}
+.modeopt{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;color:var(--ink)}
+.modeopt:has(input:checked){border-color:var(--ink)}
+.modeopt input{margin-top:5px;width:18px;height:18px;flex:none}
+.modeopt b{display:block;font-size:16px}.modeopt small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
+#aiBox{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;max-width:760px}
+#aiBox[hidden]{display:none}
+#aiBox .chk{display:flex;gap:8px;align-items:center;color:var(--ink);min-height:0;margin:0}
+#aiBox .chk input{min-height:0;height:18px;width:18px;margin:0;flex:none}
+#aiBox label{margin:0}
+#aiBox input[type=password]{min-height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--bg);direction:ltr;font-family:monospace}
 .toast{position:fixed;inset-inline:16px;bottom:16px;margin:auto;max-width:520px;background:var(--ink);color:var(--bg);padding:14px 18px;border-radius:14px;box-shadow:0 10px 30px #0004;display:none;z-index:9}
 .toast.on{display:block;animation:up .3s ease}
 @keyframes up{from{transform:translateY(20px);opacity:0}}
@@ -130,6 +142,18 @@ textarea.ics{width:100%;min-height:120px;font:12px/1.4 monospace;direction:ltr;m
     <label style="display:flex;align-items:center;gap:6px;color:var(--ink)"><input type="checkbox" id="showPast"> إظهار ما انتهى</label>
   </div>
   <p class="status" id="status"></p>
+  <h2 style="margin-top:24px;font-size:20px">مصدر الإعلانات</h2>
+  <div class="modes" role="radiogroup" aria-label="مصدر الإعلانات">
+    <label class="modeopt"><input type="radio" name="srcmode" value="free" checked><span><b>النسخة المجانية</b><small>الإعلانات المشتركة في الموقع، وتُحدَّث كل أسبوع للجميع.</small></span></label>
+    <label class="modeopt"><input type="radio" name="srcmode" value="ai"><span><b>البحث الذكي بحسابي في Claude</b><small>يبحث لك الآن في الويب وفي مواقع الجامعات والمراكز البحثية عن إعلانات مجالاتك، بمفتاح Claude API الخاص بك.</small></span></label>
+  </div>
+  <div id="aiBox" hidden>
+    <label style="color:var(--ink)">مفتاح Claude API<input type="password" id="apiKey" autocomplete="off" spellcheck="false" placeholder="sk-ant-..."></label>
+    <label class="chk"><input type="checkbox" id="rememberKey"> احفظ المفتاح في هذا المتصفح</label>
+    <label class="chk"><input type="checkbox" id="aiUnis" checked> ابحث أيضًا في مواقع الجامعات والمراكز البحثية العربية</label>
+    <div><button class="primary" type="button" id="aiRun">ابحث الآن في مجالاتي</button> <span class="status" id="aiMsg"></span></div>
+    <p class="note">يبحث في المجالات التي اخترتها أعلاه (أو في كل المجالات إن لم تختر). يُرسَل المفتاح من متصفحك إلى Claude مباشرة، ولا يصل إلى هذا الموقع ولا إلى أي شخص آخر. تكلفة كل بحث على حسابك في Claude. ما يجده يظهر لك وحدك، وتستطيع حذفه، ويُضاف إلى «ملف الإعلانات المحدّث» إن نزّلته. تحصل على المفتاح من console.anthropic.com، ويجب أن يكون البحث في الويب مفعّلًا لحسابك.</p>
+  </div>
 </div></section>
 
 <section class="band paper"><div class="wrap">
