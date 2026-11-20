@@ -76,6 +76,15 @@ a{color:var(--lapis)}
 .d.off{visibility:hidden}
 .dayinfo{margin-top:20px;border-top:2px solid var(--ink);padding-top:12px;min-height:24px}
 .dayinfo ul{margin:6px 0 0;padding-inline-start:20px}
+.dayinfo li{margin:8px 0}
+.dayinfo .org{display:block;color:var(--mute);font-size:14px}
+.dayinfo .closeDay{display:none}
+@media(max-width:700px){
+  .dayinfo.open{position:fixed;inset-inline:0;bottom:0;z-index:60;margin:0;max-height:62vh;overflow:auto;background:var(--bg);
+    border:0;border-top:3px solid var(--ink);border-radius:18px 18px 0 0;padding:14px 18px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px #0004}
+  .dayinfo.open .closeDay{display:inline-flex;float:left;min-height:40px;align-items:center}
+  .dayinfo.open strong{font-size:18px;line-height:40px}
+}
 /* list */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:16px;margin-top:18px}
 .card{border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}

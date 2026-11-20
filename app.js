@@ -68,7 +68,10 @@ function renderYear(){
     h+=`<div class="month"><h3>${MONTHS[m]}<small>${cnt?cnt+" يوم فيه مواعيد":""}</small></h3><div class="grid">${cells}</div></div>`;
   }
   $("months").innerHTML=h;
-  if(selDay){const it=map[selDay]||[];$("dayinfo").innerHTML=`<strong>${fmt(selDay)}</strong>`+(it.length?`<ul>${it.map(o=>`<li><b>${esc(stageLabel(o.ev,o.x.k))}</b>: ${safeUrl(o.ev.url)?`<a href="${esc(safeUrl(o.ev.url))}" target="_blank" rel="noopener">${esc(o.ev.title)}</a>`:esc(o.ev.title)}</li>`).join("")}</ul>`:`<p class="note">لا مواعيد في هذا اليوم ضمن اختياراتك.</p>`)}
+  const di=$("dayinfo");
+  if(selDay){const it=map[selDay]||[];di.innerHTML=`<button type="button" class="closeDay" aria-label="إغلاق">إغلاق ✕</button><strong>${fmt(selDay)}</strong>`+(it.length?`<ul>${it.map(o=>`<li><b>${esc(stageLabel(o.ev,o.x.k))}</b>: ${safeUrl(o.ev.url)?`<a href="${esc(safeUrl(o.ev.url))}" target="_blank" rel="noopener">${esc(o.ev.title)}</a>`:esc(o.ev.title)}${o.ev.org?`<span class="org">${esc(o.ev.org)}</span>`:""}</li>`).join("")}</ul>`:`<p class="note">لا مواعيد في هذا اليوم ضمن اختياراتك.</p>`)}
+  else di.innerHTML=`<span class="note">اختر يومًا ملوّنًا لترى ما فيه.</span>`;
+  di.classList.toggle("open",!!selDay);
 }
 function renderCards(){
   const vis=visible();
@@ -136,6 +139,11 @@ $("fieldChips").addEventListener("click",e=>{const b=e.target.closest("button");
 ["q","kindF","showPast"].forEach(id=>$(id).addEventListener("input",()=>{renderYear();renderCards();renderAlarm()}));
 $("prevY").onclick=()=>{year--;renderYear()};$("nextY").onclick=()=>{year++;renderYear()};
 $("months").addEventListener("click",e=>{const b=e.target.closest("[data-day]");if(!b)return;selDay=b.dataset.day;renderYear()});
+// على الهاتف تظهر تفاصيل اليوم في لوحة أسفل الشاشة؛ تُغلق بزر الإغلاق أو بالضغط خارجها أو بمفتاح Esc
+function closeDay(){if(!selDay)return;selDay=null;renderYear()}
+$("dayinfo").addEventListener("click",e=>{if(e.target.closest(".closeDay"))closeDay()});
+document.addEventListener("click",e=>{if(selDay&&matchMedia("(max-width:700px)").matches&&!e.target.closest("#dayinfo,[data-day]"))closeDay()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDay()});
 $("cards").addEventListener("click",e=>{const w=e.target.closest("[data-w]");if(w){const id=w.dataset.w;prefs.watch=prefs.watch.includes(id)?prefs.watch.filter(x=>x!==id):[...prefs.watch,id];savePrefs();renderCards();renderAlarm();return}
   const d=e.target.closest("[data-del]");if(d){if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent="اضغطي مجددًا للتأكيد";return}
     localEvents=localEvents.filter(x=>x.id!==d.dataset.del);store(LS_LOCAL,localEvents);rebuild();renderAll()}});
