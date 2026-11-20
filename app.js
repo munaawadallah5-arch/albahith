@@ -31,7 +31,8 @@ let year=today.getFullYear(),selDay=null,soundOn=false,actx=null;const notified=
 function evDates(ev){return STAGES.filter(s=>ev.dates&&parse(ev.dates[s[0]])).map(s=>({k:s[0],v:ev.dates[s[0]],c:s[2]}))}
 function nextDate(ev){const f=evDates(ev).filter(x=>days(x.v)>=0).sort((a,b)=>a.v<b.v?-1:1);return f[0]||null}
 function lastDate(ev){const a=evDates(ev).map(x=>x.v).sort();return a[a.length-1]||""}
-function isPast(ev){const l=lastDate(ev);return l?days(l)<0:false}
+// يُعدّ الإعلان منتهيًا إذا مضت كل مواعيده بعد تاريخ الإعلان؛ وإن لم يكن فيه إلا تاريخ الإعلان فهو قائم (المواعيد لم تُعلن بعد)
+function isPast(ev){const a=evDates(ev).filter(x=>x.k!=="announced").map(x=>x.v).sort();const l=a[a.length-1];return l?days(l)<0:false}
 function visible(){
   const q=$("q").value.trim(),k=$("kindF").value,past=$("showPast").checked;
   return events.filter(ev=>(!prefs.fields.length||(ev.fields||[]).some(f=>prefs.fields.includes(f)))
