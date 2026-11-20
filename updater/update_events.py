@@ -392,6 +392,13 @@ def free_sources(settings):
     return srcs + [s for s in others if s.get("type") == "news"] + [s for s in others if s.get("type") != "news"]
 
 
+def field_of(it, src):
+    """المجال من العنوان أولًا (نص الصفحة كله فيه قوائم وروابط لا تخص الإعلان)، ثم من بداية النص، ثم من مجال المصدر."""
+    return (classify(it["title"], [], None)
+            or classify(it["text"][:1200], [], None)
+            or ([] if src.get("type") == "news" else [f for f in src.get("fields", []) if f in FIELDS]))
+
+
 def collect_free(settings):
     readers = {"upenn": from_upenn, "page": from_page, "news": from_news}
 
@@ -413,7 +420,7 @@ def collect_free(settings):
             found.append({
                 "title": it["title"], "org": it["org"], "place": it["place"], "url": it["url"],
                 "kind": guess_kind(it["title"], src.get("kind") or "مؤتمر"),
-                "fields": classify(it["title"] + " " + it["text"][:3000], [] if src.get("type") == "news" else src.get("fields", []), None),
+                "fields": field_of(it, src),
                 "dates": dates, "note": "", "source": src.get("name", "free"),
             })
         report["notes"].append(f"{src.get('name')}: قُرئ {len(items)} عنصرًا")
@@ -550,7 +557,26 @@ SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "
               "عدد خاص", "عدد خاصّ"]
 
 
-def clean(item, allowed_fields):
+# أخبار عن حدث (فوز، تكريم، اختتام…) لا دعوات للمشاركة
+NEWS_WORDS = ["record number", "winner", "congratulat", "announced the", "awarded to", "concludes", "concluded", "recap", "highlights", "continues to grow", "interest in the",
+              "فوز", "يفوز", "تفوز", "الفائز", "تكريم", "يكرم", "تكرم", "اختتام", "اختتمت", "اختتم", "انطلاق فعاليات", "انطلقت", "انطلق",
+              "يشارك في", "تشارك في", "مشاركة في", "يستضيف وفد", "زيارة"]
+GENERIC_TITLES = {"callforpapers", "callforapplications", "callforproposals", "cfp", "conferences", "annualinternationalconferences",
+                  "events", "news", "مؤتمرات", "الفعاليات", "دعوةللمشاركة", "الأخبار"}
+
+
+def on_purpose(title, dates):
+    """غاية الموقع: إعلانات مؤتمرات وجوائز ومسابقات ومنح بحثية ما زال باب المشاركة فيها مفتوحًا."""
+    low = title.lower()
+    if norm_title(title) in GENERIC_TITLES or len(title) < 15:
+        return False  # عنوان عام لا يدل على إعلان بعينه
+    if any(w in low for w in NEWS_WORDS):
+        return False
+    deadlines = [dates[k] for k in ("abstract", "paper") if k in dates]
+    return any(dt.date.fromisoformat(v) >= TODAY for v in deadlines)  # باب التقديم أو الترشح ما زال مفتوحًا
+
+
+def clean(item, allowed_fields, strict=False):
     title = re.sub(r"\s+", " ", strip_tags(str(item.get("title", "")))).strip()[:220]
     if any(w in title.lower() for w in SKIP_WORDS):
         return None  # دعوات المجلات ليست مؤتمرات ولا جوائز
@@ -564,6 +590,8 @@ def clean(item, allowed_fields):
             dates[k] = v
     if not any(dt.date.fromisoformat(v) >= TODAY for v in dates.values()):
         return None  # لا موعد قادم
+    if strict and not on_purpose(title, dates):
+        return None
     fields = [f for f in item.get("fields", []) if f in FIELDS] or classify(title + " " + str(item.get("note", "")), [], None)
     if allowed_fields and not any(f in allowed_fields for f in fields):
         return None
@@ -602,10 +630,11 @@ def main():
     allowed = settings.get("fields") or []
     limit = int(settings.get("max_new_per_run", 20))
     per_source = int(settings.get("max_new_per_source", 4) or 0)
+    strict = bool(settings.get("strict", True))
     from_source = {}
     new = []
     for c in candidates:
-        e = clean(c, allowed)
+        e = clean(c, allowed, strict)
         if not e:
             continue
         group = e["source"].split(" – ")[0]  # «UPenn CFP – religion» و«UPenn CFP – theory» مصدر واحد
@@ -657,7 +686,9 @@ def main():
         with open(gh_out, "a", encoding="utf-8") as f:
             f.write(f"changed={'true' if (new or pruned) else 'false'}\n")
             f.write(f"added={len(new)}\n")
-            f.write(f"review={'true' if settings.get('review', True) else 'false'}\n")
+            # النشر التلقائي له سقف: إن جاء عدد كبير غير معتاد يُحوَّل إلى المراجعة احتياطًا
+            review = settings.get("review", True) or len(new) > int(settings.get("auto_publish_max", 25))
+            f.write(f"review={'true' if review else 'false'}\n")
             f.write(f"report={os.path.join(out_dir, 'report.md')}\n")
 
 
