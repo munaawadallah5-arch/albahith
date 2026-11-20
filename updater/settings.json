@@ -15,7 +15,7 @@
     "أنثروبولوجيا",
     "دراسات الشرق الأوسط"
   ],
-  "_شرح_universities": "الجامعات التي يُبحث في مواقعها ومراكزها البحثية. domain: نطاق موقعها (يُستعمل في البحث الذكي). events_pages: روابط صفحات المؤتمرات أو الفعاليات فيها، وتُقرأ في الطريقة المجانية أيضًا. enabled: false لإيقاف جامعة.",
+  "_شرح_universities": "الجامعات والمراكز البحثية التي يُبحث في مواقعها (ومنها كل ما تحت النطاق: الكليات والمراكز والمعاهد التابعة). domain: نطاق الموقع، ويُستعمل في البحث الذكي. events_pages: روابط صفحات الإعلانات أو الفعاليات، وتقرؤها الطريقة المجانية أيضًا، فتفتح كل إعلان فيها وتقرأ مواعيده. enabled: false للإيقاف.",
   "universities": [
     {"name": "جامعة الملك سعود", "domain": "ksu.edu.sa", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
     {"name": "جامعة الإمام محمد بن سعود الإسلامية", "domain": "imamu.edu.sa", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
@@ -30,7 +30,7 @@
     {"name": "جامعة اليرموك", "domain": "yu.edu.jo", "place": "إربد، الأردن", "events_pages": [], "enabled": true},
     {"name": "جامعة بيرزيت", "domain": "birzeit.edu", "place": "بيرزيت، فلسطين", "events_pages": [], "enabled": true},
     {"name": "جامعة قطر", "domain": "qu.edu.qa", "place": "الدوحة، قطر", "events_pages": [], "enabled": true},
-    {"name": "جامعة حمد بن خليفة", "domain": "hbku.edu.qa", "place": "الدوحة، قطر", "events_pages": [], "enabled": true},
+    {"name": "جامعة حمد بن خليفة", "domain": "hbku.edu.qa", "place": "الدوحة، قطر", "events_pages": ["https://cile.hbku.edu.qa/public-outreach/calendar"], "enabled": true},
     {"name": "معهد الدوحة للدراسات العليا", "domain": "dohainstitute.edu.qa", "place": "الدوحة، قطر", "events_pages": [], "enabled": true},
     {"name": "جامعة الشارقة", "domain": "sharjah.ac.ae", "place": "الشارقة، الإمارات", "events_pages": [], "enabled": true},
     {"name": "جامعة الإمارات العربية المتحدة", "domain": "uaeu.ac.ae", "place": "العين، الإمارات", "events_pages": [], "enabled": true},
@@ -44,7 +44,19 @@
     {"name": "جامعة محمد الخامس", "domain": "um5.ac.ma", "place": "الرباط، المغرب", "events_pages": [], "enabled": true},
     {"name": "جامعة أبو بكر بلقايد – تلمسان", "domain": "univ-tlemcen.dz", "place": "تلمسان، الجزائر", "events_pages": [], "enabled": true},
     {"name": "جامعة سطيف 2", "domain": "univ-setif2.dz", "place": "سطيف، الجزائر", "events_pages": [], "enabled": true},
-    {"name": "جامعة عبد الحميد بن باديس – مستغانم", "domain": "univ-mosta.dz", "place": "مستغانم، الجزائر", "events_pages": [], "enabled": true}
+    {"name": "جامعة عبد الحميد بن باديس – مستغانم", "domain": "univ-mosta.dz", "place": "مستغانم، الجزائر", "events_pages": [], "enabled": true},
+    {"name": "المركز العربي للأبحاث ودراسة السياسات", "domain": "dohainstitute.org", "place": "الدوحة، قطر", "events_pages": ["https://www.dohainstitute.org/en/Events/Pages/index.aspx"], "enabled": true},
+    {"name": "مركز الملك فيصل للبحوث والدراسات الإسلامية", "domain": "kfcris.com", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
+    {"name": "مجمع الملك سلمان العالمي للغة العربية", "domain": "ksaa.gov.sa", "place": "الرياض، السعودية", "events_pages": [], "enabled": true},
+    {"name": "مؤسسة الدراسات الفلسطينية", "domain": "palestine-studies.org", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
+    {"name": "المجلس العربي للعلوم الاجتماعية", "domain": "theacss.org", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
+    {"name": "مؤسسة الفكر العربي", "domain": "arabthought.org", "place": "بيروت، لبنان", "events_pages": [], "enabled": true},
+    {"name": "مؤسسة مؤمنون بلا حدود", "domain": "mominoun.com", "place": "الرباط، المغرب", "events_pages": [], "enabled": true},
+    {"name": "مؤسسة الملك عبد العزيز آل سعود للدراسات الإسلامية والعلوم الإنسانية", "domain": "fondation.org.ma", "place": "الدار البيضاء، المغرب", "events_pages": [], "enabled": true},
+    {"name": "مؤسسة الفرقان للتراث الإسلامي", "domain": "al-furqan.com", "place": "لندن، المملكة المتحدة", "events_pages": [], "enabled": true},
+    {"name": "مكتبة الإسكندرية", "domain": "bibalex.org", "place": "الإسكندرية، مصر", "events_pages": [], "enabled": true},
+    {"name": "الألكسو", "domain": "alecso.org", "place": "تونس", "events_pages": [], "enabled": true},
+    {"name": "الإيسيسكو", "domain": "icesco.org", "place": "الرباط، المغرب", "events_pages": [], "enabled": true}
   ],
   "max_new_per_run": 20,
   "_شرح_prune_after_days": "حذف الإعلانات التي انتهت منذ أكثر من هذا العدد من الأيام؛ 0 = لا حذف أبدًا",

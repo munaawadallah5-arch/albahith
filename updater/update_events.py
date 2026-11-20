@@ -49,7 +49,7 @@ FIELD_WORDS = {
     "رياضيات وحاسوب": ["mathemat", "computer science", "computing", "artificial intelligence", "رياضيات", "حاسوب", "ذكاء اصطناعي"],
 }
 KIND_WORDS = [("جائزة", ["prize", "award", "جائزة"]), ("مسابقة", ["competition", "contest", "مسابقة"]),
-              ("منحة", ["grant", "fellowship", "scholarship", "منحة", "منح"]),
+              ("منحة", ["grant", "fellowship", "منحة بحثية", "منح بحثية"]),
               ("مدرسة صيفية/شتوية", ["summer school", "winter school", "مدرسة صيفية", "مدرسة شتوية"])]
 
 MONTHS_EN = {m: i + 1 for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"])}
@@ -63,7 +63,9 @@ LABELS = {
     "abstract": ["abstract", "proposal", "ملخص", "الملخصات", "مقترح"],
     "notify": ["notification", "acceptance", "إشعار", "القبول", "النتائج"],
     "paper": ["deadline", "submission", "full paper", "آخر موعد", "التقديم", "الترشح", "تسليم", "الترشيح"],
-    "start": ["conference date", "will be held", "takes place", "when", "held on", "event date", "ينعقد", "انعقاد", "يعقد", "تُعقد"],
+    "start": ["conference date", "dates:", "will be held", "takes place", "when", "held on", "event date", "seminar", "symposium",
+              "colloquium", "congress", "workshop", "winter school", "summer school", "ينعقد", "انعقاد", "يعقد", "تُعقد",
+              "الندوة", "الملتقى", "المؤتمر في"],
 }
 
 report = {"added": [], "errors": [], "notes": []}
@@ -126,51 +128,67 @@ def find_dates(text):
     t = western_digits(text)
     out = []
     for m in re.finditer(r"\b(\d{4})-(\d{1,2})-(\d{1,2})\b", t):
-        out.append((m.start(), mk_date(*m.groups()), None))
+        out.append((m.start(), mk_date(*m.groups()), None, m.end()))
     # June 14–18, 2027
     for m in re.finditer(r"\b(" + EN_MONTH_RE + r")\s+(\d{1,2})\s*[-–—]\s*(\d{1,2}),?\s+(\d{4})", t, re.I):
         mo = MONTHS_EN.get(m.group(1)[:3].lower())
         if mo:
-            out.append((m.start(), mk_date(m.group(4), mo, m.group(2)), mk_date(m.group(4), mo, m.group(3))))
+            out.append((m.start(), mk_date(m.group(4), mo, m.group(2)), mk_date(m.group(4), mo, m.group(3)), m.end()))
     # June 14, 2027 / Jun 14 2027
     for m in re.finditer(r"\b(" + EN_MONTH_RE + r")\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})", t, re.I):
         mo = MONTHS_EN.get(m.group(1)[:3].lower())
         if mo:
-            out.append((m.start(), mk_date(m.group(3), mo, m.group(2)), None))
+            out.append((m.start(), mk_date(m.group(3), mo, m.group(2)), None, m.end()))
     # 14 June 2027
     for m in re.finditer(r"\b(\d{1,2})(?:st|nd|rd|th)?\s+(" + EN_MONTH_RE + r"),?\s+(\d{4})", t, re.I):
         mo = MONTHS_EN.get(m.group(2)[:3].lower())
         if mo:
-            out.append((m.start(), mk_date(m.group(3), mo, m.group(1)), None))
+            out.append((m.start(), mk_date(m.group(3), mo, m.group(1)), None, m.end()))
     # 14 يونيو 2027 / 14-18 يونيو 2027
     for m in re.finditer(r"(\d{1,2})(?:\s*[-–—]\s*(\d{1,2}))?\s+(" + AR_MONTH_RE + r")\s*(?:\(\s*[^)]{0,20}\))?\s*(\d{4})", t):
         mo = MONTHS_AR[m.group(3)]
-        out.append((m.start(), mk_date(m.group(4), mo, m.group(1)), mk_date(m.group(4), mo, m.group(2)) if m.group(2) else None))
-    seen, res = set(), []
-    for p in sorted(out):
-        if p[1] and (p[0], p[1]) not in seen:
-            seen.add((p[0], p[1]))
-            res.append(p)
+        out.append((m.start(), mk_date(m.group(4), mo, m.group(1)), mk_date(m.group(4), mo, m.group(2)) if m.group(2) else None, m.end()))
+    out = [p for p in out if p[1]]
+    out.sort(key=lambda p: (p[0], -(p[3] - p[0])))
+    res, last_end = [], -1
+    for p in out:
+        if p[0] < last_end:  # تاريخ داخل مدى التقطناه من قبل
+            continue
+        res.append(p)
+        last_end = p[3]
     return res
 
 
+def _pick(at, first):
+    """يختار المرحلة من مواضع الكلمات؛ first=True: أقرب كلمة بعد التاريخ، وإلا أقرب كلمة قبله."""
+    found = {k: v for k, v in at.items() if v >= 0}
+    if not found:
+        return None
+    best = (min if first else max)(found, key=found.get)
+    if best == "paper":  # «Abstract deadline» و«Deadline for abstracts» و«Notification due»
+        for spec in ("abstract", "notify"):
+            if spec in found and abs(found[spec] - found["paper"]) <= 20:
+                return spec
+    return best
+
+
 def label_dates(text):
-    """يحاول أن يعرف أي مرحلة يمثّلها كل تاريخ من الكلمات التي قبله."""
+    """يعرف أي مرحلة يمثّلها كل تاريخ: من الوصف الذي بعده مباشرة («31 ديسمبر 2026: آخر موعد…»)، وإلا من الكلمات التي قبله."""
     t = western_digits(text)
     low = t.lower()
+    found = find_dates(t)
     dates = {}
-    for pos, d, end in find_dates(t):
-        window = low[max(0, pos - 70):pos]
-        at = {stage: max(window.rfind(w) for w in words) for stage, words in LABELS.items()}
-        best = max(at, key=at.get)
-        if at[best] < 0:
+    for i, (pos, d, end, stop) in enumerate(found):
+        nxt = found[i + 1][0] if i + 1 < len(found) else len(low)
+        after = low[stop:min(nxt, stop + 90)]
+        best = None
+        if re.match(r"^\s*[:：\-–—)]", after):
+            best = _pick({k: min([after.find(w) for w in ws if w in after] or [-1]) for k, ws in LABELS.items()}, True)
+        if best is None:
+            before = low[max(0, pos - 70):pos]
+            best = _pick({k: max(before.rfind(w) for w in ws) for k, ws in LABELS.items()}, False)
+        if best is None:
             continue
-        # «Abstract deadline» و«Notification due»: الكلمة المحددة قبل «deadline» تحسم المرحلة
-        if best == "paper":
-            for spec in ("abstract", "notify"):
-                if at[spec] >= 0 and at[spec] >= at["paper"] - 20:
-                    best = spec
-                    break
         if best not in dates:
             dates[best] = d
             if best == "start" and end:
@@ -247,7 +265,8 @@ PAGE_WORDS = ["مؤتمر", "ملتقى", "ندوة", "دعوة للمشاركة
 
 
 def from_page(src):
-    """صفحة فعاليات أو أخبار في موقع جامعة أو مركز بحثي: يلتقط الروابط التي يدل نصها على مؤتمر أو جائزة."""
+    """صفحة إعلانات أو فعاليات في موقع جامعة أو مركز بحثي: يلتقط روابط المؤتمرات والجوائز،
+    ثم يفتح صفحة كل إعلان ليقرأ مواعيده منها (صفحات القوائم لا تذكر المواعيد عادة)."""
     page = fetch(src["url"])
     body = re.sub(r"<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", page, flags=re.S | re.I)
     out, seen = [], set()
@@ -257,13 +276,19 @@ def from_page(src):
         if len(title) < 12 or not any(w in low for w in PAGE_WORDS):
             continue
         url = urllib.parse.urljoin(src["url"], html.unescape(m.group(1)))
-        if url in seen or not url.startswith("http"):
+        if url in seen or not url.startswith("http") or url.rstrip("/") == src["url"].rstrip("/"):
             continue
         seen.add(url)
         around = strip_tags(body[max(0, m.start() - 300):m.end() + 700])
         out.append({"title": title, "url": url, "text": title + "\n" + around, "org": src.get("org", ""), "place": src.get("place", "")})
-        if len(out) >= 40:
+        if len(out) >= int(src.get("max_links", 15)):
             break
+    if src.get("follow_links", True):
+        for it in out:
+            try:
+                it["text"] = it["title"] + "\n" + strip_tags(fetch(it["url"]))[:30000]
+            except Exception as e:
+                report["notes"].append(f"{src.get('name')}: تعذّر فتح {it['url']}: {type(e).__name__}")
     return out
 
 
@@ -292,7 +317,7 @@ def collect_free(settings):
             dates = label_dates(it["text"])
             found.append({
                 "title": it["title"], "org": it["org"], "place": it["place"], "url": it["url"],
-                "kind": src.get("kind") or guess_kind(it["text"], "مؤتمر"),
+                "kind": src.get("kind") or guess_kind(it["title"], "مؤتمر"),
                 "fields": classify(it["title"] + " " + it["text"][:1500], src.get("fields", []), None),
                 "dates": dates, "note": "", "source": src.get("name", "free"),
             })
