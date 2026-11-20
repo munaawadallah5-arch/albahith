@@ -1015,7 +1015,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – تاريخ الفلسفة",
@@ -1026,7 +1027,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – الفلسفة الاجتماعية والسياسية",
@@ -1037,7 +1039,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – الأخلاق التطبيقية",
@@ -1048,7 +1051,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – الأخلاق المعيارية",
@@ -1059,7 +1063,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – فلسفة اللغة",
@@ -1071,7 +1076,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – فلسفة الحوسبة والمعلومات",
@@ -1082,7 +1088,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "PhilEvents – الفلسفة الآسيوية",
@@ -1093,7 +1100,8 @@
       ],
       "follow_links": true,
       "max_items": 25,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "موقع PhilEvents يمنع فتح صفحات الإعلانات آليًا، ونبذة الخلاصة لا تذكر المواعيد"
     },
     {
       "name": "H-Announce (H-Net)",
@@ -1101,7 +1109,8 @@
       "url": "https://networks.h-net.org/announcements",
       "fields": [],
       "max_links": 20,
-      "enabled": true
+      "enabled": false,
+      "_ملاحظة": "الرابط لم يعد يعمل"
     },
     {
       "name": "LINGUIST List – calls",
@@ -1298,5 +1307,7 @@
   ],
   "_شرح_read_homepages": "true = الجهات التي ليس لها events_pages تُقرأ صفحتها الرئيسية، فتلتقط منها روابط المؤتمرات والجوائز وتفتحها لتقرأ مواعيدها. home: رابط صفحة بديلة عن الرئيسية.",
   "read_homepages": true,
-  "parallel": 8
+  "parallel": 8,
+  "_شرح_max_new_per_source": "أقصى عدد من الإعلانات الجديدة من مصدر واحد في كل تشغيل، كي لا يملأ مصدر واحد التحديث كله. 0 = بلا حد",
+  "max_new_per_source": 4
 }

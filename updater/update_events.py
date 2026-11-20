@@ -362,8 +362,9 @@ def from_page(src):
 
 
 def free_sources(settings):
-    """مصادر الطريقة المجانية: قائمة sources، وصفحات فعاليات الجامعات (events_pages) في قائمة universities."""
-    srcs = [s for s in settings.get("sources", []) if s.get("enabled", True)]
+    """مصادر الطريقة المجانية بترتيب الأولوية: صفحات الجهات (universities)، ثم أخبار المؤتمرات، ثم بقية المصادر."""
+    others = [s for s in settings.get("sources", []) if s.get("enabled", True)]
+    srcs = []
     for u in settings.get("universities", []):
         if not u.get("enabled", True):
             continue
@@ -375,7 +376,7 @@ def free_sources(settings):
             srcs.append({"name": u.get("name", u.get("domain", "")), "type": "page", "url": page,
                          "org": u.get("name", ""), "place": u.get("place", ""), "fields": u.get("fields", []),
                          "kind": u.get("kind"), "max_links": u.get("max_links", 10 if page in u.get("events_pages", []) else 8)})
-    return srcs
+    return srcs + [s for s in others if s.get("type") == "news"] + [s for s in others if s.get("type") != "news"]
 
 
 def collect_free(settings):
@@ -532,7 +533,8 @@ def parse_json_array(text):
 
 
 # ---------------------------------------------------------------- التنقية والدمج
-SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "عدد خاص", "عدد خاصّ"]
+SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "book review", "call for participants", "survey",
+              "عدد خاص", "عدد خاصّ"]
 
 
 def clean(item, allowed_fields):
@@ -586,16 +588,21 @@ def main():
 
     allowed = settings.get("fields") or []
     limit = int(settings.get("max_new_per_run", 20))
+    per_source = int(settings.get("max_new_per_source", 4) or 0)
+    from_source = {}
     new = []
     for c in candidates:
         e = clean(c, allowed)
         if not e:
             continue
+        if per_source and from_source.get(e["source"], 0) >= per_source:
+            continue  # كي لا يملأ مصدر واحد التحديث كله
         if norm_url(e["url"]) in known_urls or norm_title(e["title"]) in known_titles or e["id"] in known_ids:
             continue
         known_urls.add(norm_url(e["url"]))
         known_titles.add(norm_title(e["title"]))
         known_ids.add(e["id"])
+        from_source[e["source"]] = from_source.get(e["source"], 0) + 1
         new.append(e)
         if len(new) >= limit:
             break
