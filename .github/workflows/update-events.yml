@@ -1,0 +1,51 @@
+name: تحديث إعلانات الباحث
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"   # كل يوم إثنين الساعة 4:17 بتوقيت غرينتش
+  workflow_dispatch: {}      # زر «Run workflow» للتشغيل اليدوي
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-events
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: جمع الإعلانات الجديدة
+        id: run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python updater/update_events.py
+
+      - name: اقتراح الإعلانات في طلب دمج للمراجعة
+        if: steps.run.outputs.changed == 'true' && steps.run.outputs.review == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: auto/new-events
+          delete-branch: true
+          add-paths: events.js
+          commit-message: "إعلانات جديدة (${{ steps.run.outputs.added }})"
+          title: "إعلانات جديدة للمراجعة (${{ steps.run.outputs.added }})"
+          body-path: ${{ steps.run.outputs.report }}
+
+      - name: نشر الإعلانات مباشرة
+        if: steps.run.outputs.changed == 'true' && steps.run.outputs.review != 'true'
+        run: |
+          git config user.name "albahith-bot"
+          git config user.email "albahith-bot@users.noreply.github.com"
+          git add events.js
+          git commit -m "إعلانات جديدة (${{ steps.run.outputs.added }})"
+          git push
