@@ -566,6 +566,8 @@ def parse_json_array(text):
 
 
 # ---------------------------------------------------------------- التنقية والدمج
+JOURNAL_HINTS = ["journal", "review", "quarterly", "peer-reviewed", "peer reviewed", "guest editor", "edited volume", "edited collection",
+                 "special issue", "issue of", "volume", "مجلة", "عدد", "كتاب جماعي", "محرر"]
 SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "book review", "book series", "call for participants", "survey",
               "عدد خاص", "عدد خاصّ"]
 
@@ -605,6 +607,10 @@ def clean(item, allowed_fields, strict=False):
         return None  # لا موعد قادم
     if strict and not on_purpose(title, dates):
         return None
+    if strict and item.get("kind", "مؤتمر") == "مؤتمر" and "start" not in dates:
+        hint = (title + " " + str(item.get("org", "")) + " " + str(item.get("note", ""))).lower()
+        if any(w in hint for w in JOURNAL_HINTS):
+            return None  # دعوة للنشر في مجلة أو كتاب، لا مؤتمر (لا موعد انعقاد، وفيها اسم مجلة أو محرر)
     fields = [f for f in item.get("fields", []) if f in FIELDS] or classify(title + " " + str(item.get("note", "")), [], None)
     if allowed_fields and not any(f in allowed_fields for f in fields):
         return None

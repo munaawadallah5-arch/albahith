@@ -295,9 +295,22 @@ function showPage(){
 addEventListener("hashchange",showPage);
 showPage();
 function homeSummary(){
-  const n=visible().length,f=prefs.fields.length;
-  const hs=$("homeStatus");if(hs)hs.textContent=f?`في مجالاتك (${prefs.fields.join("، ")}): ${n} إعلانًا.`:`لم تختر مجالاتك بعد؛ تُعرض كل الإعلانات (${n}). اختر مجالاتك من صفحة «الإعلانات».`;
+  const pool=events.filter(ev=>(!prefs.fields.length||(ev.fields||[]).some(f=>prefs.fields.includes(f)))&&!isPast(ev));
+  const f=prefs.fields.length;
+  $("homeStatus").textContent=f?`مجالاتك: ${prefs.fields.join("، ")}. فيها ${pool.length} إعلانًا قائمًا.`:`لم تختر مجالاتك بعد، فتظهر كل الإعلانات (${pool.length}). اختر مجالاتك من صفحة «الإعلانات».`;
+  // أقرب المواعيد
+  const items=[];pool.forEach(ev=>{const x=evDates(ev).filter(x=>x.k!=="announced"&&days(x.v)>=0).sort((a,b)=>a.v<b.v?-1:1)[0];if(x)items.push({ev,x,d:days(x.v)})});  // أقرب موعد لكل إعلان، لا كل مواعيده
+  items.sort((a,b)=>a.x.v<b.x.v?-1:a.x.v>b.x.v?1:0);
+  $("homeSoon").innerHTML=items.slice(0,6).map(o=>{const dt=parse(o.x.v),u=safeUrl(o.ev.url);
+    return `<li><span class="dt" style="background:var(${o.x.c})"><b>${dt.getDate()}</b><small>${MONTHS[dt.getMonth()]}</small></span><span class="tx">${u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(o.ev.title)}</a>`:esc(o.ev.title)}<span>${esc(stageLabel(o.ev,o.x.k))} · ${o.d===0?"اليوم":"بعد "+o.d+" يوم"}${o.ev.org?" · "+esc(o.ev.org):""}</span></span></li>`}).join("")||`<li><span></span><span class="tx">لا مواعيد قادمة في مجالاتك.</span></li>`;
+  // حسب النوع
+  $("homeKinds").innerHTML=KINDS.map(k=>{const n=pool.filter(ev=>ev.kind===k).length;return n?`<button type="button" data-kind="${esc(k)}">${esc(k==="مدرسة صيفية/شتوية"?"مدارس صيفية وشتوية":k==="منحة"?"منح":k==="مسابقة"?"مسابقات":k==="جائزة"?"جوائز":"مؤتمرات")}<small>${n}</small></button>`:""}).join("");
+  // أضيف حديثًا
+  const rec=pool.filter(ev=>ev.added).sort((a,b)=>a.added<b.added?1:-1).slice(0,4);
+  $("recentH").hidden=$("homeRecent").hidden=!rec.length;
+  $("homeRecent").innerHTML=rec.map(ev=>{const u=safeUrl(ev.url);return `<li>${u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(ev.title)}</a>`:esc(ev.title)}<span>${esc(ev.kind)}${ev.org?" · "+esc(ev.org):""}</span></li>`}).join("");
 }
+$("homeKinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]");if(!b)return;$("kindF").value=b.dataset.kind;$("q").value="";location.hash="#list";renderYear();renderCards();renderAlarm()});
 
 /* المظهر: تلقائي (بحسب الجهاز) أو فاتح أو داكن */
 const LS_THEME="albahith-theme",darkMQ=matchMedia("(prefers-color-scheme: dark)");
