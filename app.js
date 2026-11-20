@@ -139,10 +139,10 @@ $("fieldChips").addEventListener("click",e=>{const b=e.target.closest("button");
 ["q","kindF","showPast"].forEach(id=>$(id).addEventListener("input",()=>{renderYear();renderCards();renderAlarm()}));
 $("prevY").onclick=()=>{year--;renderYear()};$("nextY").onclick=()=>{year++;renderYear()};
 $("months").addEventListener("click",e=>{const b=e.target.closest("[data-day]");if(!b)return;selDay=b.dataset.day;renderYear()});
-// على الهاتف تظهر تفاصيل اليوم في لوحة أسفل الشاشة؛ تُغلق بزر الإغلاق أو بالضغط خارجها أو بمفتاح Esc
+// تظهر تفاصيل اليوم في لوحة عائمة أسفل الشاشة؛ تُغلق بزر الإغلاق أو بالضغط خارجها أو بمفتاح Esc
 function closeDay(){if(!selDay)return;selDay=null;renderYear()}
 $("dayinfo").addEventListener("click",e=>{if(e.target.closest(".closeDay"))closeDay()});
-document.addEventListener("click",e=>{if(selDay&&matchMedia("(max-width:700px)").matches&&!e.target.closest("#dayinfo,[data-day]"))closeDay()});
+document.addEventListener("click",e=>{if(selDay&&!e.target.closest("#dayinfo,[data-day]"))closeDay()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDay()});
 $("cards").addEventListener("click",e=>{const w=e.target.closest("[data-w]");if(w){const id=w.dataset.w;prefs.watch=prefs.watch.includes(id)?prefs.watch.filter(x=>x!==id):[...prefs.watch,id];savePrefs();renderCards();renderAlarm();return}
   const d=e.target.closest("[data-del]");if(d){if(d.dataset.confirm!=="1"){d.dataset.confirm="1";d.textContent="اضغطي مجددًا للتأكيد";return}
