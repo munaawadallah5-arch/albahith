@@ -213,6 +213,11 @@ def label_dates(text):
                 dates["end"] = end
         elif best == "start" and "end" not in dates and d > dates["start"]:
             dates["end"] = d
+    deadline = max([dates[k] for k in ("abstract", "paper") if k in dates] or [""])
+    if deadline and dates.get("start", "9") < deadline:  # «بدء» قبل آخر موعد للتقديم: غالبًا تاريخ نشر الإعلان لا الانعقاد
+        dates.pop("start")
+        if dates.get("end", "9") < deadline:
+            dates.pop("end", None)
     return dates
 
 
@@ -305,11 +310,19 @@ def from_rss(src):
     return out
 
 
+CALL_WORDS = ["دعوة للمشاركة", "تدعو", "يدعو", "استكتاب", "باب الترشح", "باب الترشيح", "باب المشاركة", "باب التقديم",
+              "استقبال الأبحاث", "استقبال البحوث", "استقبال الملخصات", "call for papers", "call for proposals", "call for abstracts",
+              "cfp", "call for nominations", "nominations open", "invites submissions", "submissions open"]
+
+
 def from_news(src):
     """بحث في أخبار Bing (مجاني، بلا مفتاح): يلتقط ما تنشره الصحف عن دعوات المشاركة في المؤتمرات والجوائز، ثم يقرأ الخبر نفسه."""
     q = urllib.parse.quote(src["query"])
     url = f"https://www.bing.com/news/search?q={q}&format=rss&qft=sortbydate%3d%221%22&setlang={src.get('lang', 'ar')}"
-    return from_rss({**src, "url": url, "require_words": True, "follow_links": True, "max_items": src.get("max_items", 15)})
+    items = from_rss({**src, "url": url, "require_words": True, "max_items": src.get("max_items", 15)})
+    items = [it for it in items if any(w in it["text"].lower() for w in CALL_WORDS)]  # خبر عن دعوة للمشاركة، لا أي خبر فيه كلمة «مؤتمر»
+    follow(src, items)
+    return items
 
 
 def from_upenn(src):
@@ -400,7 +413,7 @@ def collect_free(settings):
             found.append({
                 "title": it["title"], "org": it["org"], "place": it["place"], "url": it["url"],
                 "kind": guess_kind(it["title"], src.get("kind") or "مؤتمر"),
-                "fields": classify(it["title"] + " " + it["text"][:1500], src.get("fields", []), None),
+                "fields": classify(it["title"] + " " + it["text"][:3000], [] if src.get("type") == "news" else src.get("fields", []), None),
                 "dates": dates, "note": "", "source": src.get("name", "free"),
             })
         report["notes"].append(f"{src.get('name')}: قُرئ {len(items)} عنصرًا")
@@ -533,7 +546,7 @@ def parse_json_array(text):
 
 
 # ---------------------------------------------------------------- التنقية والدمج
-SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "book review", "call for participants", "survey",
+SKIP_WORDS = ["(jrnl)", "special issue", "journal issue", "call for chapters", "book review", "book series", "call for participants", "survey",
               "عدد خاص", "عدد خاصّ"]
 
 
@@ -595,14 +608,15 @@ def main():
         e = clean(c, allowed)
         if not e:
             continue
-        if per_source and from_source.get(e["source"], 0) >= per_source:
+        group = e["source"].split(" – ")[0]  # «UPenn CFP – religion» و«UPenn CFP – theory» مصدر واحد
+        if per_source and from_source.get(group, 0) >= per_source:
             continue  # كي لا يملأ مصدر واحد التحديث كله
         if norm_url(e["url"]) in known_urls or norm_title(e["title"]) in known_titles or e["id"] in known_ids:
             continue
         known_urls.add(norm_url(e["url"]))
         known_titles.add(norm_title(e["title"]))
         known_ids.add(e["id"])
-        from_source[e["source"]] = from_source.get(e["source"], 0) + 1
+        from_source[group] = from_source.get(group, 0) + 1
         new.append(e)
         if len(new) >= limit:
             break
