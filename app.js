@@ -254,5 +254,19 @@ $("aiRun").onclick=runAI;
 $("rememberKey").onchange=e=>{if(!e.target.checked){try{localStorage.removeItem(LS_KEY)}catch(x){}}};
 setMode(prefs.srcmode||"free");
 
+/* تطبيق قابل للتثبيت (PWA) */
+(function(){
+  const box=$("installBox"),btn=$("installBtn"),hint=$("installHint");
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  if("serviceWorker" in navigator&&isSecureContext)navigator.serviceWorker.register("sw.js").catch(()=>{});
+  if(standalone)return;   // التطبيق مثبّت ومفتوح كتطبيق
+  let deferred=null;
+  addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;box.hidden=false;btn.hidden=false;hint.textContent="يضع «الباحث» بين تطبيقاتك، ويفتح في نافذته الخاصة، ويعمل دون إنترنت."});
+  btn.onclick=async()=>{if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;box.hidden=true};
+  addEventListener("appinstalled",()=>{box.hidden=true;toast("ثُبّت تطبيق الباحث.")});
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  if(ios){box.hidden=false;hint.textContent="لتثبيت «الباحث» تطبيقًا على جهازك: افتح الموقع في Safari، واضغط زر المشاركة ⬆︎، ثم «إضافة إلى الشاشة الرئيسية»."}
+})();
+
 renderAll();
 })();

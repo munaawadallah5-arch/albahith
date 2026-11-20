@@ -7,6 +7,7 @@
   both  — الطريقتان معًا.
 يعمل بمكتبات بايثون القياسية فقط، دون تثبيت أي حزمة.
 """
+import calendar
 import datetime as dt
 import hashlib
 import html
@@ -166,6 +167,16 @@ def find_dates(text):
     for m in re.finditer(r"(\d{1,2})(?:(?:\s*[-–—]\s*|\s+(?:و|إلى|الى|حتى)\s*)(\d{1,2}))?\s+(" + AR_MONTH_RE + r")\s*(?:\(\s*[^)]{0,20}\))?\s*(\d{4})", t):
         mo = MONTHS_AR[m.group(3)]
         out.append((m.start(), mk_date(m.group(4), mo, m.group(1)), mk_date(m.group(4), mo, m.group(2)) if m.group(2) else None, m.end()))
+    # «نهاية شهر مارس 2027» / «end of March 2027» = آخر يوم في الشهر؛ «مطلع/بداية شهر مارس» = أوله
+    for m in re.finditer(r"(نهاية|أواخر|آخر|مطلع|بداية|أوائل|منتصف)\s+(?:شهر\s+)?(" + AR_MONTH_RE + r")\s*(?:\(\s*[^)]{0,20}\))?\s*(\d{4})", t):
+        mo, y = MONTHS_AR[m.group(2)], int(m.group(3))
+        day = {"نهاية": 0, "أواخر": 0, "آخر": 0, "مطلع": 1, "بداية": 1, "أوائل": 1, "منتصف": 15}[m.group(1)]
+        out.append((m.start(), mk_date(y, mo, day or calendar.monthrange(y, mo)[1]), None, m.end()))
+    for m in re.finditer(r"\b(end|late|beginning|early|mid)[- ]+(?:of\s+)?(" + EN_MONTH_RE + r"),?\s+(\d{4})", t, re.I):
+        mo, y = MONTHS_EN.get(m.group(2)[:3].lower()), int(m.group(3))
+        if mo:
+            day = {"end": 0, "late": 0, "beginning": 1, "early": 1, "mid": 15}[m.group(1).lower()]
+            out.append((m.start(), mk_date(y, mo, day or calendar.monthrange(y, mo)[1]), None, m.end()))
     out = [p for p in out if p[1]]
     out.sort(key=lambda p: (p[0], -(p[3] - p[0])))
     res, last_end = [], -1
@@ -417,6 +428,10 @@ def collect_free(settings):
             continue
         for it in items:
             dates = label_dates(it["text"])
+            if src.get("type") in ("news", "page"):
+                # في الأخبار وصفحات المواقع: تاريخ اليوم أو أمس غالبًا تاريخ نشر الخبر، لا موعد المؤتمر
+                soon = (TODAY + dt.timedelta(days=1)).isoformat()
+                dates = {k: v for k, v in dates.items() if v > soon}
             found.append({
                 "title": it["title"], "org": it["org"], "place": it["place"], "url": it["url"],
                 "kind": guess_kind(it["title"], src.get("kind") or "مؤتمر"),

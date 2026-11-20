@@ -1,0 +1,19 @@
+{
+  "name": "الباحث: مرصد المؤتمرات والمسابقات والجوائز البحثية",
+  "short_name": "الباحث",
+  "description": "إعلانات المؤتمرات والمسابقات والجوائز البحثية في مجالاتك، بمواعيدها وتذكير قبل كل موعد",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    {"src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}
